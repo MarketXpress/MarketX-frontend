@@ -25,12 +25,11 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto backdrop-blur-2xl bg-black/20 border border-white/10 rounded-3xl px-6 py-3 flex items-center justify-between shadow-2xl">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-              <ShoppingBag className="text-white w-5 h-5" />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-white hidden sm:block">
-              Market<span className="text-blue-500">X</span>
-            </span>
+            <img 
+              src="/logo.png" 
+              alt="MarketX Logo" 
+              className="h-9 sm:h-11 object-contain group-hover:scale-105 transition-transform"
+            />
           </Link>
 
           <div className="hidden md:flex items-center gap-1">
