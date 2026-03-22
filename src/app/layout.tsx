@@ -13,8 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MarketX | Secure Escrow Marketplace",
+  title: "MarketX | Secure P2P Ledger & Escrow",
   description: "Decentralized P2P marketplace and escrow platform built on Stellar Soroban.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 import Navbar from "@/components/layout/Navbar";
