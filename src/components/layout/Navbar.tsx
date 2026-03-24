@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Search, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import WalletConnect from "@/components/auth/WalletConnect";
+import SearchBar from "./SearchBar";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -51,14 +52,9 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-blue-500/50 transition-all">
-            <Search className="w-4 h-4 text-neutral-500" />
-            <input
-              type="text"
-              placeholder="Search assets..."
-              className="bg-transparent border-none outline-none text-sm px-2 text-white placeholder:text-neutral-600 w-32 lg:w-48"
-            />
-          </div>
+          <Suspense fallback={<div className="hidden sm:block w-32 lg:w-48 h-8 rounded-xl bg-white/5 animate-pulse" />}>
+            <SearchBar />
+          </Suspense>
 
           <WalletConnect />
 
