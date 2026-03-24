@@ -7,6 +7,8 @@ import CursorAura from "@/components/animations/CursorAura";
 import FloatingBackground from "@/components/animations/FloatingBackground";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { cn } from "@/lib/utils";
+import MarketplaceSection from "@/components/marketplace/MarketplaceSection";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -96,58 +98,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Marketplace Preview Section */}
-      <section id="explore" className="relative z-10 max-w-7xl mx-auto px-6 py-32 w-full">
-         <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
-            <ScrollReveal className="flex flex-col gap-4">
-               <h2 className="text-4xl md:text-6xl font-black tracking-tighter">Marketplace Preview</h2>
-               <p className="text-neutral-400 max-w-xl">Discover verified assets currently secured in escrow.</p>
-            </ScrollReveal>
-            <ScrollReveal delay={0.3}>
-               <Link href="/auth/register" className="group flex items-center gap-2 text-sm font-bold text-blue-400 hover:text-white transition-colors">
-                  View all listings <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-               </Link>
-            </ScrollReveal>
-         </div>
-
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-               { name: "Digital Artwork #042", price: "240 XLM", seller: "art_node", time: "2h ago" },
-               { name: "SaaS Enterprise License", price: "1200 USDC", seller: "cloud_soft", time: "5h ago" },
-               { name: "Vintage Camera Collection", price: "850 XLM", seller: "retro_shop", time: "1d ago" },
-            ].map((item, i) => (
-               <ScrollReveal key={i} delay={0.2 * i}>
-                  <div className="group relative rounded-[2.5rem] bg-white/5 border border-white/10 overflow-hidden hover:border-blue-500/50 transition-all duration-700 hover:shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)]">
-                     {/* Shine Effect Overlay */}
-                     <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/5 to-transparent skew-x-12 z-20 pointer-events-none" />
-                     
-                     <div className="h-56 bg-linear-to-br from-neutral-800 to-neutral-900 relative overflow-hidden">
-                        <motion.div 
-                           whileHover={{ scale: 1.1 }}
-                           transition={{ duration: 0.8, ease: "easeOut" }}
-                           className="absolute inset-0 flex items-center justify-center opacity-20"
-                        >
-                           <Package className="w-16 h-16" />
-                        </motion.div>
-                        <div className="absolute top-6 right-6 px-4 py-1.5 rounded-full bg-blue-600 text-[10px] font-black tracking-widest uppercase text-white shadow-xl z-10">
-                           In Escrow
-                        </div>
-                     </div>
-                     <div className="p-8 relative z-10 bg-black/40 backdrop-blur-xl">
-                        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
-                           <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight line-clamp-1">{item.name}</h3>
-                           <span className="text-xl font-black text-blue-400 shrink-0">{item.price}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs text-neutral-500 font-bold tracking-wide">
-                           <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5"><Clock className="w-3.5 h-3.5" /> {item.time}</span>
-                           <span className="flex items-center gap-2">Seller: <span className="text-blue-200/60 uppercase">{item.seller}</span></span>
-                        </div>
-                     </div>
-                  </div>
-               </ScrollReveal>
-            ))}
-         </div>
-      </section>
+      {/* Interactive Marketplace Section */}
+      <Suspense fallback={
+        <section className="relative z-10 max-w-7xl mx-auto px-6 py-32 w-full h-[600px] flex items-center justify-center">
+          <div className="text-blue-400 font-bold uppercase tracking-widest text-sm animate-pulse flex flex-col items-center gap-4">
+            <div className="w-12 h-12 rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin" />
+            Initializing Marketplace...
+          </div>
+        </section>
+      }>
+         <MarketplaceSection />
+      </Suspense>
 
       {/* Core Feature Cards Section */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 py-32 w-full">
