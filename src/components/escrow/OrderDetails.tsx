@@ -10,7 +10,12 @@ import {
   ShieldAlert,
   ArrowRight,
 } from "lucide-react";
-import { EscrowState, EscrowTransaction, mockTransaction, ESCROW_STATES } from "@/lib/escrowData";
+import {
+  EscrowState,
+  EscrowTransaction,
+  mockTransaction,
+  ESCROW_STATES,
+} from "@/lib/escrowData";
 import { cn } from "@/lib/utils";
 import TransactionTimeline from "./TransactionTimeline";
 import CountdownTimer from "./CountdownTimer";
@@ -19,14 +24,21 @@ import EventLog from "./EventLog";
 
 type ViewRole = "buyer" | "seller";
 
-export default function OrderDetails() {
-  const [transaction, setTransaction] = useState<EscrowTransaction>(mockTransaction);
+interface OrderDetailsProps {
+  initialTransaction?: EscrowTransaction;
+}
+
+export default function OrderDetails({
+  initialTransaction = mockTransaction,
+}: OrderDetailsProps = {}) {
+  const [transaction, setTransaction] =
+    useState<EscrowTransaction>(initialTransaction);
   const [viewRole, setViewRole] = useState<ViewRole>("buyer");
   const [showConfetti, setShowConfetti] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const currentStateIndex = ESCROW_STATES.findIndex(
-    (s) => s.state === transaction.currentState
+    (s) => s.state === transaction.currentState,
   );
 
   const handleConfirmReceipt = async () => {
@@ -88,7 +100,8 @@ export default function OrderDetails() {
           label: "Delivery Proof Submitted",
           timestamp: new Date().toISOString(),
           actor: "seller" as const,
-          description: "Seller submitted proof of delivery. Awaiting buyer confirmation.",
+          description:
+            "Seller submitted proof of delivery. Awaiting buyer confirmation.",
         },
       ],
     }));
@@ -98,7 +111,10 @@ export default function OrderDetails() {
   const closeConfetti = useCallback(() => setShowConfetti(false), []);
 
   const needsAction = () => {
-    if (transaction.currentState === "released" || transaction.currentState === "disputed")
+    if (
+      transaction.currentState === "released" ||
+      transaction.currentState === "disputed"
+    )
       return null;
     if (transaction.currentState === "in_escrow") return "seller";
     if (transaction.currentState === "in_transit") return "buyer";
@@ -113,7 +129,9 @@ export default function OrderDetails() {
 
       {/* Role Switcher */}
       <div className="flex items-center gap-3">
-        <span className="text-xs text-neutral-500 uppercase tracking-widest font-bold">Viewing as:</span>
+        <span className="text-xs text-neutral-500 uppercase tracking-widest font-bold">
+          Viewing as:
+        </span>
         <div className="flex bg-white/5 rounded-xl p-1 border border-white/10">
           {(["buyer", "seller"] as ViewRole[]).map((role) => (
             <button
@@ -123,7 +141,7 @@ export default function OrderDetails() {
                 "px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
                 viewRole === role
                   ? "bg-blue-600 text-white shadow-lg"
-                  : "text-neutral-400 hover:text-white"
+                  : "text-neutral-400 hover:text-white",
               )}
             >
               {role}
@@ -146,7 +164,7 @@ export default function OrderDetails() {
             "p-6 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
             actionNeeded === viewRole
               ? "bg-blue-500/10 border-blue-500/30"
-              : "bg-white/5 border-white/10"
+              : "bg-white/5 border-white/10",
           )}
         >
           <div className="flex items-center gap-3">
@@ -186,23 +204,36 @@ export default function OrderDetails() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <span className="text-xs text-neutral-500 uppercase block mb-1">Name</span>
-                <span className="text-lg font-bold text-white">{transaction.assetName}</span>
+                <span className="text-xs text-neutral-500 uppercase block mb-1">
+                  Name
+                </span>
+                <span className="text-lg font-bold text-white">
+                  {transaction.assetName}
+                </span>
               </div>
               <div>
-                <span className="text-xs text-neutral-500 uppercase block mb-1">Category</span>
+                <span className="text-xs text-neutral-500 uppercase block mb-1">
+                  Category
+                </span>
                 <span className="inline-block px-3 py-1 bg-white/10 text-white rounded-lg text-xs font-bold uppercase">
                   {transaction.assetCategory}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-neutral-500 uppercase block mb-1">Contract ID</span>
-                <span className="text-sm font-mono text-blue-400">{transaction.id}</span>
+                <span className="text-xs text-neutral-500 uppercase block mb-1">
+                  Contract ID
+                </span>
+                <span className="text-sm font-mono text-blue-400">
+                  {transaction.id}
+                </span>
               </div>
               <div>
-                <span className="text-xs text-neutral-500 uppercase block mb-1">Escrowed Amount</span>
+                <span className="text-xs text-neutral-500 uppercase block mb-1">
+                  Escrowed Amount
+                </span>
                 <span className="text-2xl font-black text-blue-400">
-                  {transaction.priceXLM.toLocaleString()} <span className="text-base">XLM</span>
+                  {transaction.priceXLM.toLocaleString()}{" "}
+                  <span className="text-base">XLM</span>
                 </span>
               </div>
             </div>
@@ -222,14 +253,26 @@ export default function OrderDetails() {
               Parties
             </h3>
             <div>
-              <span className="text-xs text-neutral-500 uppercase block mb-1">Buyer</span>
-              <p className="text-sm font-bold text-white">{transaction.buyer.name}</p>
-              <p className="text-xs font-mono text-neutral-500">{transaction.buyer.address}</p>
+              <span className="text-xs text-neutral-500 uppercase block mb-1">
+                Buyer
+              </span>
+              <p className="text-sm font-bold text-white">
+                {transaction.buyer.name}
+              </p>
+              <p className="text-xs font-mono text-neutral-500">
+                {transaction.buyer.address}
+              </p>
             </div>
             <div>
-              <span className="text-xs text-neutral-500 uppercase block mb-1">Seller</span>
-              <p className="text-sm font-bold text-white">{transaction.seller.name}</p>
-              <p className="text-xs font-mono text-neutral-500">{transaction.seller.address}</p>
+              <span className="text-xs text-neutral-500 uppercase block mb-1">
+                Seller
+              </span>
+              <p className="text-sm font-bold text-white">
+                {transaction.seller.name}
+              </p>
+              <p className="text-xs font-mono text-neutral-500">
+                {transaction.seller.address}
+              </p>
             </div>
           </div>
 
@@ -252,63 +295,68 @@ export default function OrderDetails() {
                   Actions
                 </h3>
 
-                {viewRole === "buyer" && transaction.currentState === "in_transit" && (
-                  <div className="space-y-3">
+                {viewRole === "buyer" &&
+                  transaction.currentState === "in_transit" && (
+                    <div className="space-y-3">
+                      <button
+                        onClick={handleConfirmReceipt}
+                        disabled={isProcessing}
+                        className={cn(
+                          "w-full px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
+                          isProcessing
+                            ? "bg-green-600/50 text-white/50 cursor-not-allowed"
+                            : "bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-600/30",
+                        )}
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        {isProcessing ? "Processing…" : "Confirm Receipt"}
+                      </button>
+                      <button
+                        onClick={handleOpenDispute}
+                        disabled={isProcessing}
+                        className={cn(
+                          "w-full px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
+                          isProcessing
+                            ? "bg-red-600/50 text-white/50 cursor-not-allowed"
+                            : "bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/30",
+                        )}
+                      >
+                        <ShieldAlert className="w-4 h-4" />
+                        {isProcessing ? "Processing…" : "Open Dispute"}
+                      </button>
+                    </div>
+                  )}
+
+                {viewRole === "seller" &&
+                  transaction.currentState === "in_escrow" && (
                     <button
-                      onClick={handleConfirmReceipt}
+                      onClick={handleSubmitDelivery}
                       disabled={isProcessing}
                       className={cn(
                         "w-full px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
                         isProcessing
-                          ? "bg-green-600/50 text-white/50 cursor-not-allowed"
-                          : "bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-600/30"
+                          ? "bg-blue-600/50 text-white/50 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30",
                       )}
                     >
-                      <CheckCircle2 className="w-4 h-4" />
-                      {isProcessing ? "Processing…" : "Confirm Receipt"}
+                      <Send className="w-4 h-4" />
+                      {isProcessing ? "Submitting…" : "Submit Delivery Proof"}
                     </button>
-                    <button
-                      onClick={handleOpenDispute}
-                      disabled={isProcessing}
-                      className={cn(
-                        "w-full px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
-                        isProcessing
-                          ? "bg-red-600/50 text-white/50 cursor-not-allowed"
-                          : "bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/30"
-                      )}
-                    >
-                      <ShieldAlert className="w-4 h-4" />
-                      {isProcessing ? "Processing…" : "Open Dispute"}
-                    </button>
-                  </div>
-                )}
+                  )}
 
-                {viewRole === "seller" && transaction.currentState === "in_escrow" && (
-                  <button
-                    onClick={handleSubmitDelivery}
-                    disabled={isProcessing}
-                    className={cn(
-                      "w-full px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
-                      isProcessing
-                        ? "bg-blue-600/50 text-white/50 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30"
-                    )}
-                  >
-                    <Send className="w-4 h-4" />
-                    {isProcessing ? "Submitting…" : "Submit Delivery Proof"}
-                  </button>
-                )}
-
-                {viewRole === "buyer" && transaction.currentState !== "in_transit" && (
-                  <p className="text-xs text-neutral-500 text-center py-2">
-                    Waiting for seller to submit delivery proof before you can act.
-                  </p>
-                )}
-                {viewRole === "seller" && transaction.currentState !== "in_escrow" && (
-                  <p className="text-xs text-neutral-500 text-center py-2">
-                    Delivery proof submitted. Awaiting buyer confirmation.
-                  </p>
-                )}
+                {viewRole === "buyer" &&
+                  transaction.currentState !== "in_transit" && (
+                    <p className="text-xs text-neutral-500 text-center py-2">
+                      Waiting for seller to submit delivery proof before you can
+                      act.
+                    </p>
+                  )}
+                {viewRole === "seller" &&
+                  transaction.currentState !== "in_escrow" && (
+                    <p className="text-xs text-neutral-500 text-center py-2">
+                      Delivery proof submitted. Awaiting buyer confirmation.
+                    </p>
+                  )}
               </div>
             )}
 
@@ -320,8 +368,12 @@ export default function OrderDetails() {
               className="p-6 bg-green-500/10 border border-green-500/20 rounded-3xl text-center space-y-2"
             >
               <CheckCircle2 className="w-10 h-10 text-green-400 mx-auto" />
-              <h3 className="text-lg font-black text-green-400">Transaction Complete</h3>
-              <p className="text-xs text-green-300/60">Funds have been released to the seller.</p>
+              <h3 className="text-lg font-black text-green-400">
+                Transaction Complete
+              </h3>
+              <p className="text-xs text-green-300/60">
+                Funds have been released to the seller.
+              </p>
             </motion.div>
           )}
 
@@ -332,8 +384,12 @@ export default function OrderDetails() {
               className="p-6 bg-red-500/10 border border-red-500/20 rounded-3xl text-center space-y-2"
             >
               <AlertTriangle className="w-10 h-10 text-red-400 mx-auto" />
-              <h3 className="text-lg font-black text-red-400">Dispute Active</h3>
-              <p className="text-xs text-red-300/60">This escrow is frozen pending arbitration.</p>
+              <h3 className="text-lg font-black text-red-400">
+                Dispute Active
+              </h3>
+              <p className="text-xs text-red-300/60">
+                This escrow is frozen pending arbitration.
+              </p>
             </motion.div>
           )}
         </div>
