@@ -6,6 +6,7 @@ import { ShoppingBag, Search, Menu, X } from "lucide-react";
 import { useState, Suspense } from "react";
 import WalletConnect from "@/components/auth/WalletConnect";
 import SearchBar from "./SearchBar";
+import ThemeToggle from "./ThemeToggle";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -56,6 +57,7 @@ export default function Navbar() {
             <SearchBar />
           </Suspense>
 
+          <ThemeToggle />
           <WalletConnect />
 
           <Link

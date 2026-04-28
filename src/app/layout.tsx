@@ -33,8 +33,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased" suppressHydrationWarning>
         <AppProviders>
+          <a href="#main-content" className="skip-nav">Skip to main content</a>
           <Navbar />
-          {children}
+          <main id="main-content">
+            {children}
+          </main>
         </AppProviders>
       </body>
     </html>

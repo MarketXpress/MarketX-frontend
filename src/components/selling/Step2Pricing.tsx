@@ -18,11 +18,14 @@ export default function Step2Pricing() {
       <div className="space-y-8 max-w-2xl">
         {/* Price Input */}
         <div className="space-y-2 relative">
-          <label className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Asset Price</label>
+          <label htmlFor="price-amount" className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Asset Price</label>
           <div className="relative">
             <input
+              id="price-amount"
               type="number"
               step="0.01"
+              aria-invalid={!!errors.priceAmount}
+              aria-describedby={errors.priceAmount ? "price-error" : undefined}
               {...register("priceAmount", { valueAsNumber: true })}
               placeholder="0.00"
               className={cn(
@@ -34,7 +37,7 @@ export default function Step2Pricing() {
               <span className="text-lg font-bold text-neutral-500">XLM</span>
             </div>
           </div>
-          {errors.priceAmount && <p className="text-xs text-red-500 font-medium">{errors.priceAmount.message}</p>}
+          {errors.priceAmount && <p id="price-error" className="text-xs text-red-500 font-medium" role="alert">{errors.priceAmount.message}</p>}
         </div>
 
         <div className="h-px w-full bg-white/5" />
@@ -42,10 +45,13 @@ export default function Step2Pricing() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Delivery Timeframe */}
           <div className="space-y-2">
-            <label className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Delivery Timeframe</label>
+            <label htmlFor="delivery-timeframe" className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Delivery Timeframe</label>
             <div className="relative">
               <input
+                id="delivery-timeframe"
                 type="number"
+                aria-invalid={!!errors.deliveryTimeframe}
+                aria-describedby={errors.deliveryTimeframe ? "delivery-error" : undefined}
                 {...register("deliveryTimeframe", { valueAsNumber: true })}
                 placeholder="e.g. 7"
                 className={cn(
@@ -56,15 +62,18 @@ export default function Step2Pricing() {
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-neutral-500">Days</span>
             </div>
             <p className="text-xs text-neutral-500 mt-1">Time allowed to deliver the asset after escrow funding.</p>
-            {errors.deliveryTimeframe && <p className="text-xs text-red-500 font-medium">{errors.deliveryTimeframe.message}</p>}
+            {errors.deliveryTimeframe && <p id="delivery-error" className="text-xs text-red-500 font-medium" role="alert">{errors.deliveryTimeframe.message}</p>}
           </div>
 
           {/* Dispute Period */}
           <div className="space-y-2">
-            <label className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Dispute Period</label>
+            <label htmlFor="dispute-period" className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Dispute Period</label>
             <div className="relative">
               <input
+                id="dispute-period"
                 type="number"
+                aria-invalid={!!errors.disputePeriod}
+                aria-describedby={errors.disputePeriod ? "dispute-error" : undefined}
                 {...register("disputePeriod", { valueAsNumber: true })}
                 placeholder="e.g. 3"
                 className={cn(
@@ -75,13 +84,13 @@ export default function Step2Pricing() {
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-neutral-500">Days</span>
             </div>
             <p className="text-xs text-neutral-500 mt-1">Duration the buyer has to dispute after delivery.</p>
-            {errors.disputePeriod && <p className="text-xs text-red-500 font-medium">{errors.disputePeriod.message}</p>}
+            {errors.disputePeriod && <p id="dispute-error" className="text-xs text-red-500 font-medium" role="alert">{errors.disputePeriod.message}</p>}
           </div>
         </div>
 
         {/* Information Callout */}
-        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 flex gap-3">
-          <div className="text-blue-400 mt-0.5 font-bold">ℹ</div>
+        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 flex gap-3" role="note">
+          <div className="text-blue-400 mt-0.5 font-bold" aria-hidden="true">ℹ</div>
           <div>
             <h4 className="text-sm font-bold text-blue-300 mb-1">Contract Enforced</h4>
             <p className="text-xs text-blue-200/70 leading-relaxed">

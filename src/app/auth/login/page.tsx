@@ -3,13 +3,39 @@
 import Link from "next/link";
 import { useState } from "react";
 
+type FormErrors = {
+  email?: string;
+  password?: string;
+};
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState({ email: false, password: false });
+
+  const validate = () => {
+    const newErrors: FormErrors = {};
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Please enter a valid email";
+    }
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+    return newErrors;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login with:", email, password);
+    const newErrors = validate();
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      console.log("Login with:", email, password);
+    }
   };
 
   return (
@@ -24,34 +50,56 @@ export default function LoginPage() {
             <p className="text-neutral-400 text-sm">Sign in to your MarketX account</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-neutral-400 ml-1">Email Address</label>
+              <label htmlFor="email" className="text-xs font-medium text-neutral-400 ml-1">Email Address</label>
               <input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
                 placeholder="name@example.com"
-                className="bg-white/5 border border-white/10 text-white px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-neutral-600"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+                className={`bg-white/5 border text-white px-4 py-3 rounded-xl outline-none focus:ring-2 transition-all placeholder:text-neutral-600 ${
+                  errors.email && touched.email
+                    ? "border-red-500/50 focus:ring-red-500/20"
+                    : "border-white/10 focus:ring-blue-500/50"
+                }`}
                 required
               />
+              {errors.email && touched.email && (
+                <p id="email-error" className="text-xs text-red-500 font-medium" role="alert">{errors.email}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-neutral-400 ml-1">Password</label>
+              <label htmlFor="password" className="text-xs font-medium text-neutral-400 ml-1">Password</label>
               <input
+                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
                 placeholder="••••••••"
-                className="bg-white/5 border border-white/10 text-white px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-neutral-600"
+                aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? "password-error" : undefined}
+                className={`bg-white/5 border text-white px-4 py-3 rounded-xl outline-none focus:ring-2 transition-all placeholder:text-neutral-600 ${
+                  errors.password && touched.password
+                    ? "border-red-500/50 focus:ring-red-500/20"
+                    : "border-white/10 focus:ring-blue-500/50"
+                }`}
                 required
               />
+              {errors.password && touched.password && (
+                <p id="password-error" className="text-xs text-red-500 font-medium" role="alert">{errors.password}</p>
+              )}
             </div>
 
             <div className="flex items-center justify-between mt-1 px-1">
               <div className="flex items-center gap-2">
-                <input type="checkbox" id="remember" className="rounded border-white/10 bg-white/5" />
+                <input type="checkbox" id="remember" className="rounded border-white/10 bg-white/5" aria-label="Remember me" />
                 <label htmlFor="remember" className="text-xs text-neutral-400">Remember me</label>
               </div>
               <Link href="#" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
@@ -77,10 +125,10 @@ export default function LoginPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-             <button className="flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white py-2.5 rounded-xl hover:bg-white/10 transition-all text-sm font-medium">
+             <button type="button" className="flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white py-2.5 rounded-xl hover:bg-white/10 transition-all text-sm font-medium">
                Google
              </button>
-             <button className="flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white py-2.5 rounded-xl hover:bg-white/10 transition-all text-sm font-medium">
+             <button type="button" className="flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white py-2.5 rounded-xl hover:bg-white/10 transition-all text-sm font-medium">
                Github
              </button>
           </div>
