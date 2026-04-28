@@ -21,6 +21,8 @@ import TransactionTimeline from "./TransactionTimeline";
 import CountdownTimer from "./CountdownTimer";
 import ConfettiSuccess from "./ConfettiSuccess";
 import EventLog from "./EventLog";
+import { useToast } from "@/context/ToastContext";
+import { useToast } from "@/context/ToastContext";
 
 type ViewRole = "buyer" | "seller";
 
@@ -36,6 +38,8 @@ export default function OrderDetails({
   const [viewRole, setViewRole] = useState<ViewRole>("buyer");
   const [showConfetti, setShowConfetti] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { addToast } = useToast();
+  const { toast } = useToast();
 
   const currentStateIndex = ESCROW_STATES.findIndex(
     (s) => s.state === transaction.currentState,
@@ -62,6 +66,11 @@ export default function OrderDetails({
     }));
     setIsProcessing(false);
     setShowConfetti(true);
+    toast({
+      title: "Receipt confirmed",
+      description: "Funds have been released from escrow.",
+      variant: "success",
+    });
   };
 
   const handleOpenDispute = async () => {
@@ -84,6 +93,11 @@ export default function OrderDetails({
       ],
     }));
     setIsProcessing(false);
+    toast({
+      title: "Dispute opened",
+      description: "The transaction has been frozen pending arbitration.",
+      variant: "info",
+    });
   };
 
   const handleSubmitDelivery = async () => {
@@ -106,6 +120,11 @@ export default function OrderDetails({
       ],
     }));
     setIsProcessing(false);
+    toast({
+      title: "Delivery submitted",
+      description: "Your proof of delivery has been recorded.",
+      variant: "success",
+    });
   };
 
   const closeConfetti = useCallback(() => setShowConfetti(false), []);

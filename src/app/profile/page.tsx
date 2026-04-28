@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AvatarUpload from "@/components/auth/AvatarUpload";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
 import { Save, User, Mail, MapPin } from "lucide-react";
 
 export default function ProfilePage() {

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ChevronRight, Save } from "lucide-react";
 import { listingSchema, ListingFormData } from "@/lib/validations/listing";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/context/ToastContext";
 
 import Step1Details from "./Step1Details";
 import Step2Pricing from "./Step2Pricing";
@@ -36,6 +37,7 @@ export default function MultiStepForm() {
   });
 
   const { trigger, getValues, reset } = methods;
+  const { toast } = useToast();
 
   // Load draft on mount
   useEffect(() => {
@@ -53,7 +55,11 @@ export default function MultiStepForm() {
   const saveDraft = () => {
     const data = getValues();
     localStorage.setItem("marketx_listing_draft", JSON.stringify(data));
-    alert("Draft saved successfully!");
+    toast({
+      title: "Draft saved",
+      description: "Your listing draft was saved locally.",
+      variant: "success",
+    });
   };
 
   const nextStep = async () => {

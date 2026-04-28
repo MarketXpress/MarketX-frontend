@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { name: "Marketplace", href: "/" },
   { name: "Selling", href: "/dashboard/selling" },
   { name: "Buying", href: "/dashboard/buying" },
+  { name: "Profile", href: "/profile" },
 ];
 
 export default function Navbar() {

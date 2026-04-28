@@ -82,7 +82,7 @@ export default function FilterSidebar({
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const activeFiltersCount = Array.from(searchParams.keys()).filter(k => k !== "q").length;
+  const activeFiltersCount = Array.from(searchParams.keys()).filter((k) => k !== "q" && k !== "page").length;
 
   const content = (
     <div className="flex flex-col gap-8">
