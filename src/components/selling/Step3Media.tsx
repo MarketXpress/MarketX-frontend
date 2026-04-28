@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { ScrollReveal } from "../animations/ScrollReveal";
 
 export default function Step3Media() {
-  const { register, setValue, watch, formState: { errors } } = useFormContext<ListingFormData>();
+  const { setValue, watch, formState: { errors } } = useFormContext<ListingFormData>();
   const [previews, setPreviews] = useState<{url: string, file: File}[]>([]);
 
   const mediaFiles = watch("media");
