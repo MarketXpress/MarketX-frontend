@@ -7,7 +7,7 @@ import { ScrollReveal } from "../animations/ScrollReveal";
 
 export default function Step1Details() {
   const { register, watch, formState: { errors } } = useFormContext<ListingFormData>();
-  
+
   const descriptionValue = watch("description") || "";
   const currentCategory = watch("category");
 
@@ -21,8 +21,11 @@ export default function Step1Details() {
       <div className="space-y-6 max-w-2xl">
         {/* Name Input */}
         <div className="space-y-2">
-          <label className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Asset Name</label>
+          <label htmlFor="asset-name" className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Asset Name</label>
           <input
+            id="asset-name"
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? "asset-name-error" : undefined}
             {...register("name")}
             placeholder="e.g. Digital Artwork #042"
             className={cn(
@@ -30,35 +33,35 @@ export default function Step1Details() {
               errors.name ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
             )}
           />
-          {errors.name && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
+          {errors.name && <p id="asset-name-error" className="text-xs text-red-500 font-medium" role="alert">{errors.name.message}</p>}
         </div>
 
         {/* Category Selector */}
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Category</label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Category</legend>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" role="radiogroup" aria-describedby={errors.category ? "category-error" : undefined}>
             {["Digital", "Physical", "Service"].map((cat) => (
-              <label 
-                key={cat} 
+              <label
+                key={cat}
                 className={cn(
                   "cursor-pointer px-4 py-3 rounded-xl border text-center transition-all font-bold text-sm",
-                  currentCategory === cat 
-                    ? "bg-blue-600/10 border-blue-500 text-blue-400" 
+                  currentCategory === cat
+                    ? "bg-blue-600/10 border-blue-500 text-blue-400"
                     : "bg-black/50 border-white/10 text-neutral-400 hover:border-white/30"
                 )}
               >
-                <input type="radio" value={cat} {...register("category")} className="hidden" />
+                <input type="radio" value={cat} {...register("category")} className="sr-only" />
                 {cat}
               </label>
             ))}
           </div>
-          {errors.category && <p className="text-xs text-red-500 font-medium">{errors.category.message}</p>}
-        </div>
+          {errors.category && <p id="category-error" className="text-xs text-red-500 font-medium" role="alert">{errors.category.message}</p>}
+        </fieldset>
 
         {/* Description Textarea */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Description</label>
+            <label htmlFor="asset-description" className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Description</label>
             <span className={cn(
               "text-xs font-bold",
               descriptionValue.length > 500 ? "text-red-500" : "text-neutral-500"
@@ -67,6 +70,9 @@ export default function Step1Details() {
             </span>
           </div>
           <textarea
+            id="asset-description"
+            aria-invalid={!!errors.description}
+            aria-describedby={errors.description ? "asset-description-error" : undefined}
             {...register("description")}
             rows={5}
             placeholder="Describe your asset in detail to establish trust with buyers..."
@@ -75,7 +81,7 @@ export default function Step1Details() {
               errors.description ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
             )}
           />
-          {errors.description && <p className="text-xs text-red-500 font-medium">{errors.description.message}</p>}
+          {errors.description && <p id="asset-description-error" className="text-xs text-red-500 font-medium" role="alert">{errors.description.message}</p>}
         </div>
       </div>
     </ScrollReveal>

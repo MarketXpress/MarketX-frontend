@@ -6,6 +6,12 @@
   --accent: #3b82f6;
 }
 
+:root.light {
+  --background: #ffffff;
+  --foreground: #050505;
+  --accent: #3b82f6;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
@@ -16,4 +22,58 @@ body {
 @theme {
   --color-glass: rgba(255, 255, 255, 0.03);
   --color-glass-border: rgba(255, 255, 255, 0.1);
+}
+
+:root.light .glass {
+  --color-glass: rgba(0, 0, 0, 0.03);
+  --color-glass-border: rgba(0, 0, 0, 0.1);
+}
+
+/* Light theme overrides */
+:root.light body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+:root.light .backdrop-blur-2xl,
+:root.light .backdrop-blur-3xl {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Accessibility: Focus Styles */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Skip Navigation */
+.skip-nav {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 0 0 8px 8px;
+  z-index: 9999;
+  transition: top 0.2s ease;
+}
+
+.skip-nav:focus {
+  top: 0;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

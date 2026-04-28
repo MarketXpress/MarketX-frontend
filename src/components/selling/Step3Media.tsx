@@ -11,32 +11,30 @@ import { ScrollReveal } from "../animations/ScrollReveal";
 export default function Step3Media() {
   const { register, setValue, watch, formState: { errors } } = useFormContext<ListingFormData>();
   const [previews, setPreviews] = useState<{url: string, file: File}[]>([]);
-  
+
   const mediaFiles = watch("media");
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    // We append to existing files
     const newPreviews = acceptedFiles.map(file => ({
       file,
       url: URL.createObjectURL(file)
     }));
-    
+
     const combinedFiles = [...(mediaFiles || []), ...acceptedFiles];
     setValue("media", combinedFiles, { shouldValidate: true, shouldDirty: true });
-    
+
     setPreviews(prev => [...prev, ...newPreviews]);
   }, [mediaFiles, setValue]);
 
   const removeFile = (indexToRemove: number) => {
-    // Revoke object URL to avoid memory leaks
     if (previews[indexToRemove]) {
       URL.revokeObjectURL(previews[indexToRemove].url);
     }
-    
+
     const newFiles = [...(mediaFiles || [])];
     newFiles.splice(indexToRemove, 1);
     setValue("media", newFiles, { shouldValidate: true, shouldDirty: true });
-    
+
     setPreviews(prev => prev.filter((_, i) => i !== indexToRemove));
   };
 
@@ -45,7 +43,7 @@ export default function Step3Media() {
     accept: {
       'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp']
     },
-    maxSize: 5242880, // 5MB
+    maxSize: 5242880,
   });
 
   return (
@@ -56,23 +54,26 @@ export default function Step3Media() {
       </div>
 
       <div className="space-y-6 max-w-2xl">
-        <div 
-          {...getRootProps()} 
+        <div
+          {...getRootProps()}
+          role="button"
+          aria-label="Upload images by dragging and dropping or clicking"
+          tabIndex={0}
           className={cn(
             "border-2 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300",
-            isDragActive 
-              ? "border-blue-500 bg-blue-500/10 scale-[1.02]" 
-              : errors.media 
-                ? "border-red-500/50 hover:bg-white/5" 
+            isDragActive
+              ? "border-blue-500 bg-blue-500/10 scale-[1.02]"
+              : errors.media
+                ? "border-red-500/50 hover:bg-white/5"
                 : "border-white/10 hover:border-blue-500/50 hover:bg-white/5"
           )}
         >
-          <input {...getInputProps()} />
+          <input {...getInputProps()} aria-label="File upload" />
           <div className={cn(
             "w-20 h-20 rounded-full flex items-center justify-center mb-6 transition-colors duration-300",
             isDragActive ? "bg-blue-500 text-white shadow-[0_0_30px_rgba(59,130,246,0.5)]" : "bg-white/5 text-neutral-400 shadow-inner"
           )}>
-            <UploadCloud className="w-10 h-10" />
+            <UploadCloud className="w-10 h-10" aria-hidden="true" />
           </div>
           <h3 className="text-xl font-bold text-white mb-2">
             {isDragActive ? "Drop your files here!" : "Drag & drop your images"}
@@ -82,27 +83,28 @@ export default function Step3Media() {
           </p>
         </div>
 
-        {errors.media && <p className="text-sm text-red-500 font-bold">{errors.media.message?.toString()}</p>}
+        {errors.media && <p className="text-sm text-red-500 font-bold" role="alert">{errors.media.message?.toString()}</p>}
 
         {/* Previews Grid */}
         {previews.length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-3" aria-label="Uploaded image previews">
             <h4 className="text-sm font-bold text-neutral-300 uppercase tracking-wider flex items-center gap-2">
-              <ImageIcon className="w-4 h-4 text-blue-400" /> Uploaded Previews ({previews.length})
+              <ImageIcon className="w-4 h-4 text-blue-400" aria-hidden="true" /> Uploaded Previews ({previews.length})
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {previews.map((preview, index) => (
                 <div key={preview.url} className="relative group aspect-square rounded-2xl overflow-hidden border border-white/10 bg-black/50">
-                  <img src={preview.url} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  
+                  <img src={preview.url} alt={`Preview ${index + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={(e) => { e.stopPropagation(); removeFile(index); }}
+                      aria-label={`Remove image ${index + 1}`}
                       className="p-3 rounded-full bg-red-500 text-white hover:bg-red-600 hover:scale-110 transition-all shadow-xl"
                     >
-                      <X className="w-5 h-5" />
+                      <X className="w-5 h-5" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
