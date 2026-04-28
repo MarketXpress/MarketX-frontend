@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Rocket, ShieldCheck, Cpu, Code2, Link as LinkIcon, CheckCircle2, Image as ImageIcon } from "lucide-react";
 import { ListingFormData } from "@/lib/validations/listing";
 import { ScrollReveal } from "../animations/ScrollReveal";

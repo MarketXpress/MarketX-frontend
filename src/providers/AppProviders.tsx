@@ -4,20 +4,20 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { ToastProvider } from "@/context/ToastContext";
+import { FeatureFlagProvider } from "@/context/FeatureFlagContext";
 
 export default function AppProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
-          <ToastProvider>
+      <FeatureFlagProvider>
+        <AuthProvider>
+          <ThemeProvider>
             {children}
-          </ToastProvider>
-        </ThemeProvider>
-      </AuthProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </FeatureFlagProvider>
     </QueryClientProvider>
   );
 }

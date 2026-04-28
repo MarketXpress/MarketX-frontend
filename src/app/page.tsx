@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Zap, Globe, Lock, Package, Wallet, CheckCircle, Search, Tag, Clock } from "lucide-react";
+import { ArrowRight, ShieldCheck, Zap, Globe, Lock, Package, Wallet, CheckCircle, Tag } from "lucide-react";
 import { motion } from "framer-motion";
 import CursorAura from "@/components/animations/CursorAura";
 import FloatingBackground from "@/components/animations/FloatingBackground";
