@@ -3,10 +3,13 @@
 import { useFormContext } from "react-hook-form";
 import { ListingFormData } from "@/lib/validations/listing";
 import { cn } from "@/lib/utils";
+import { CheckCircle2 } from "lucide-react";
 import { ScrollReveal } from "../animations/ScrollReveal";
 
 export default function Step2Pricing() {
-  const { register, formState: { errors } } = useFormContext<ListingFormData>();
+  const { register, formState: { errors, touchedFields, dirtyFields } } = useFormContext<ListingFormData>();
+  const isFieldValid = (field: keyof ListingFormData) =>
+    !errors[field] && (touchedFields[field] || dirtyFields[field]);
 
   return (
     <ScrollReveal className="w-full h-full flex flex-col gap-8 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -30,13 +33,19 @@ export default function Step2Pricing() {
               placeholder="0.00"
               className={cn(
                 "w-full bg-black/50 border rounded-xl pl-4 pr-16 py-4 text-2xl font-black text-white placeholder:text-neutral-600 outline-none transition-all focus:ring-2",
-                errors.priceAmount ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+                errors.priceAmount
+                  ? "border-red-500/50 focus:ring-red-500/20"
+                  : isFieldValid("priceAmount")
+                  ? "border-green-500/50 focus:ring-green-500/20"
+                  : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
               )}
             />
-            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 right-4 flex items-center gap-2 pointer-events-none">
+              {isFieldValid("priceAmount") && <CheckCircle2 className="w-4 h-4 text-green-500" aria-hidden="true" />}
               <span className="text-lg font-bold text-neutral-500">XLM</span>
             </div>
           </div>
+          <p className="text-xs text-neutral-500">Enter the price in XLM. Funds are held in escrow until both parties confirm.</p>
           {errors.priceAmount && <p id="price-error" className="text-xs text-red-500 font-medium" role="alert">{errors.priceAmount.message}</p>}
         </div>
 
@@ -56,7 +65,11 @@ export default function Step2Pricing() {
                 placeholder="e.g. 7"
                 className={cn(
                   "w-full bg-black/50 border rounded-xl pl-4 pr-14 py-3 text-white placeholder:text-neutral-600 outline-none transition-all focus:ring-2",
-                  errors.deliveryTimeframe ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+                  errors.deliveryTimeframe
+                    ? "border-red-500/50 focus:ring-red-500/20"
+                    : isFieldValid("deliveryTimeframe")
+                    ? "border-green-500/50 focus:ring-green-500/20"
+                    : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
                 )}
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-neutral-500">Days</span>
@@ -78,7 +91,11 @@ export default function Step2Pricing() {
                 placeholder="e.g. 3"
                 className={cn(
                   "w-full bg-black/50 border rounded-xl pl-4 pr-14 py-3 text-white placeholder:text-neutral-600 outline-none transition-all focus:ring-2",
-                  errors.disputePeriod ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+                  errors.disputePeriod
+                    ? "border-red-500/50 focus:ring-red-500/20"
+                    : isFieldValid("disputePeriod")
+                    ? "border-green-500/50 focus:ring-green-500/20"
+                    : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
                 )}
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-neutral-500">Days</span>

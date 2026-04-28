@@ -3,10 +3,13 @@
 import { useFormContext } from "react-hook-form";
 import { ListingFormData } from "@/lib/validations/listing";
 import { cn } from "@/lib/utils";
+import { CheckCircle2 } from "lucide-react";
 import { ScrollReveal } from "../animations/ScrollReveal";
 
 export default function Step1Details() {
-  const { register, watch, formState: { errors } } = useFormContext<ListingFormData>();
+  const { register, watch, formState: { errors, touchedFields, dirtyFields } } = useFormContext<ListingFormData>();
+  const isFieldValid = (field: keyof ListingFormData) =>
+    !errors[field] && (touchedFields[field] || dirtyFields[field]);
 
   const descriptionValue = watch("description") || "";
   const currentCategory = watch("category");
@@ -22,17 +25,27 @@ export default function Step1Details() {
         {/* Name Input */}
         <div className="space-y-2">
           <label htmlFor="asset-name" className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Asset Name</label>
-          <input
-            id="asset-name"
-            aria-invalid={!!errors.name}
-            aria-describedby={errors.name ? "asset-name-error" : undefined}
-            {...register("name")}
-            placeholder="e.g. Digital Artwork #042"
-            className={cn(
-              "w-full bg-black/50 border rounded-xl px-4 py-3 text-white placeholder:text-neutral-600 outline-none transition-all focus:ring-2",
-              errors.name ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+          <div className="relative">
+            <input
+              id="asset-name"
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? "asset-name-error" : "asset-name-hint"}
+              {...register("name")}
+              placeholder="e.g. Digital Artwork #042"
+              className={cn(
+                "w-full bg-black/50 border rounded-xl px-4 py-3 pr-10 text-white placeholder:text-neutral-600 outline-none transition-all focus:ring-2",
+                errors.name
+                  ? "border-red-500/50 focus:ring-red-500/20"
+                  : isFieldValid("name")
+                  ? "border-green-500/50 focus:ring-green-500/20"
+                  : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+              )}
+            />
+            {isFieldValid("name") && (
+              <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500" aria-hidden="true" />
             )}
-          />
+          </div>
+          <p id="asset-name-hint" className="text-xs text-neutral-500">Give your asset a clear, descriptive name buyers will recognise.</p>
           {errors.name && <p id="asset-name-error" className="text-xs text-red-500 font-medium" role="alert">{errors.name.message}</p>}
         </div>
 
@@ -61,10 +74,13 @@ export default function Step1Details() {
         {/* Description Textarea */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label htmlFor="asset-description" className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Description</label>
+            <label htmlFor="asset-description" className="text-sm font-bold text-neutral-300 uppercase tracking-wider flex items-center gap-1.5">
+              Description
+              {isFieldValid("description") && <CheckCircle2 className="w-3.5 h-3.5 text-green-500" aria-hidden="true" />}
+            </label>
             <span className={cn(
               "text-xs font-bold",
-              descriptionValue.length > 500 ? "text-red-500" : "text-neutral-500"
+              descriptionValue.length > 500 ? "text-red-500" : descriptionValue.length > 400 ? "text-amber-400" : "text-neutral-500"
             )}>
               {descriptionValue.length} / 500
             </span>
@@ -72,15 +88,20 @@ export default function Step1Details() {
           <textarea
             id="asset-description"
             aria-invalid={!!errors.description}
-            aria-describedby={errors.description ? "asset-description-error" : undefined}
+            aria-describedby={errors.description ? "asset-description-error" : "asset-description-hint"}
             {...register("description")}
             rows={5}
             placeholder="Describe your asset in detail to establish trust with buyers..."
             className={cn(
               "w-full bg-black/50 border rounded-xl px-4 py-3 text-white placeholder:text-neutral-600 outline-none transition-all focus:ring-2 resize-none",
-              errors.description ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+              errors.description
+                ? "border-red-500/50 focus:ring-red-500/20"
+                : isFieldValid("description")
+                ? "border-green-500/50 focus:ring-green-500/20"
+                : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
             )}
           />
+          <p id="asset-description-hint" className="text-xs text-neutral-500">Minimum 20 characters. Be specific about condition, format, and delivery method.</p>
           {errors.description && <p id="asset-description-error" className="text-xs text-red-500 font-medium" role="alert">{errors.description.message}</p>}
         </div>
       </div>
