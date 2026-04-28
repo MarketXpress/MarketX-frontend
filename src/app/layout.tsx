@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 
 import Navbar from "@/components/layout/Navbar";
 import AppProviders from "@/providers/AppProviders";
+import { PageTransition } from "@/components/animations/PageTransition";
 
 export default function RootLayout({
   children,
@@ -36,7 +37,9 @@ export default function RootLayout({
           <a href="#main-content" className="skip-nav">Skip to main content</a>
           <Navbar />
           <main id="main-content">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </main>
         </AppProviders>
       </body>

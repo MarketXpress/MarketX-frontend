@@ -45,7 +45,7 @@ export default function MultiStepForm() {
         const parsed = JSON.parse(draft);
         reset(parsed);
       } catch (e) {
-        console.error("Failed to parse draft", e);
+        console.warn("Failed to parse listing draft from localStorage", e);
       }
     }
   }, [reset]);
