@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Filter, SearchX } from "lucide-react";
 import FilterSidebar from "./FilterSidebar";
 import AssetCard from "./AssetCard";
-import AssetCardSkeleton from "./AssetCardSkeleton";
 import { mockAssets } from "@/lib/mockData";
 import { ScrollReveal } from "../animations/ScrollReveal";
 
@@ -16,16 +15,6 @@ export default function MarketplaceSection() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Simulate network latency when filters change
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [searchParams]);
 
   // Derived filtered state based purely on URL SearchParams
   const filteredAssets = useMemo(() => {
@@ -109,26 +98,20 @@ export default function MarketplaceSection() {
               <Filter className="w-4 h-4" /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
             </button>
             <span className="text-sm font-medium text-neutral-400 px-4">
-               {isLoading ? "Loading..." : `${totalCount} Results`}
+               {`${totalCount} Results`}
             </span>
         </ScrollReveal>
       </div>
 
       <div className="flex gap-10 flex-grow relative">
         <FilterSidebar 
+          key={searchParams.toString()}
           isDrawerOpen={isMobileFiltersOpen} 
           closeDrawer={() => setIsMobileFiltersOpen(false)} 
         />
         
         <div className="flex-1 w-full">
-          {isLoading ? (
-            // Skeleton State
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <AssetCardSkeleton key={i} />
-              ))}
-            </div>
-          ) : paginatedAssets.length > 0 ? (
+          {paginatedAssets.length > 0 ? (
             // Loaded State
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
@@ -174,7 +157,7 @@ export default function MarketplaceSection() {
               </div>
               <h3 className="text-2xl font-bold text-white mb-3">No assets found</h3>
               <p className="text-neutral-400 max-w-md">
-                We couldn't find anything matching your current filters and search criteria. Try adjusting your parameters.
+                We couldn&apos;t find anything matching your current filters and search criteria. Try adjusting your parameters.
               </p>
             </div>
           )}

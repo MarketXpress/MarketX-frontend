@@ -14,11 +14,6 @@ export default function SearchBar() {
   const [query, setQuery] = useState(initialQuery);
   const debouncedQuery = useDebounce(query, 500);
 
-  // Sync internal state with external URL changes if we navigate back
-  useEffect(() => {
-    setQuery(searchParams.get("q") || "");
-  }, [searchParams]);
-
   // Push to URL when debounced query changes
   useEffect(() => {
     if (debouncedQuery === searchParams.get("q")) return;

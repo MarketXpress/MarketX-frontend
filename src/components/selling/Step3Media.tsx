@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { useFormContext } from "react-hook-form";
 import { X, UploadCloud, Image as ImageIcon } from "lucide-react";
@@ -94,7 +95,14 @@ export default function Step3Media() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {previews.map((preview, index) => (
                 <div key={preview.url} className="relative group aspect-square rounded-2xl overflow-hidden border border-white/10 bg-black/50">
-                  <img src={preview.url} alt={`Preview ${index + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <Image
+                    src={preview.url}
+                    alt={`Preview ${index + 1}`}
+                    fill
+                    unoptimized
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                  />
 
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">

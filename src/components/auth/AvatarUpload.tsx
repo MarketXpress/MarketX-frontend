@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { Upload, X, User } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -53,16 +54,18 @@ export default function AvatarUpload({
       <div className="relative">
         <div
           className={cn(
-            "w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 bg-white/5 flex items-center justify-center",
+            "relative w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 bg-white/5 flex items-center justify-center",
             preview && "border-blue-500/30",
           )}
         >
           {preview ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={preview}
               alt="Avatar preview"
-              className="w-full h-full object-cover"
+              fill
+              unoptimized
+              className="object-cover"
+              sizes="128px"
             />
           ) : (
             <User className="w-16 h-16 text-neutral-500" />
