@@ -4,8 +4,10 @@ import { useState } from "react";
 import AvatarUpload from "@/components/auth/AvatarUpload";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
+import { useActivityFeed } from "@/context/ActivityFeedContext";
 import { Save, User, Mail, MapPin } from "lucide-react";
 import NotificationPreferencesCard from "@/components/profile/NotificationPreferencesCard";
+import ActivityFeedPanel from "@/components/activity/ActivityFeedPanel";
 
 export default function ProfilePage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -17,9 +19,17 @@ export default function ProfilePage() {
   });
   const { user } = useAuth();
   const { toast } = useToast();
+  const { recordActivity } = useActivityFeed();
 
   const handleSave = () => {
     console.log("Saving profile:", { ...formData, avatar: avatarFile });
+    recordActivity({
+      type: "profile",
+      severity: "info",
+      title: "Profile updated",
+      description: "You saved changes to your profile settings.",
+      href: "/profile",
+    });
     toast({
       title: "Profile saved",
       description: "Your settings were updated locally in this demo build.",
@@ -115,6 +125,8 @@ export default function ProfilePage() {
           </div>
 
           <NotificationPreferencesCard />
+
+          <ActivityFeedPanel compact />
 
           {/* Save Button */}
           <button

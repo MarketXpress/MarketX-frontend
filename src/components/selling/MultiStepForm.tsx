@@ -7,6 +7,7 @@ import { Check, ChevronRight, Save } from "lucide-react";
 import { listingSchema, ListingFormData } from "@/lib/validations/listing";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/context/ToastContext";
+import { useActivityFeed } from "@/context/ActivityFeedContext";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 
 import Step1Details from "./Step1Details";
@@ -40,6 +41,7 @@ export default function MultiStepForm() {
 
   const { trigger, getValues, reset } = methods;
   const { toast } = useToast();
+  const { recordActivity } = useActivityFeed();
 
   // Load draft on mount
   useEffect(() => {
@@ -96,6 +98,13 @@ export default function MultiStepForm() {
     setIsDeploying(false);
     setIsDeployed(true);
     localStorage.removeItem("marketx_listing_draft");
+    recordActivity({
+      type: "listing",
+      severity: "success",
+      title: "Listing deployed",
+      description: `${data.name} was published with escrow terms and pricing.`,
+      href: "/dashboard/selling",
+    });
   };
 
   return (
