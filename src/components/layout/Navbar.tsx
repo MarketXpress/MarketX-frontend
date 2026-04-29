@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { name: "Marketplace", href: "/" },
   { name: "Selling", href: "/dashboard/selling" },
   { name: "Buying", href: "/dashboard/buying" },
+  { name: "Activity", href: "/dashboard/activity" },
   { name: "Profile", href: "/profile" },
 ];
 

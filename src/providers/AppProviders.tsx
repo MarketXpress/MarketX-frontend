@@ -7,6 +7,7 @@ import { ToastProvider } from "@/context/ToastContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { FeatureFlagProvider } from "@/context/FeatureFlagContext";
 import { PushNotificationProvider } from "@/context/PushNotificationContext";
+import { ActivityFeedProvider } from "@/context/ActivityFeedContext";
 
 export default function AppProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -16,11 +17,13 @@ export default function AppProviders({ children }: { children: React.ReactNode }
       <FeatureFlagProvider>
         <AuthProvider>
           <ToastProvider>
-            <PushNotificationProvider>
-              <ThemeProvider>
-                {children}
-              </ThemeProvider>
-            </PushNotificationProvider>
+            <ActivityFeedProvider>
+              <PushNotificationProvider>
+                <ThemeProvider>
+                  {children}
+                </ThemeProvider>
+              </PushNotificationProvider>
+            </ActivityFeedProvider>
           </ToastProvider>
         </AuthProvider>
       </FeatureFlagProvider>

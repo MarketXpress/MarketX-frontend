@@ -21,6 +21,7 @@ import CountdownTimer from "./CountdownTimer";
 import ConfettiSuccess from "./ConfettiSuccess";
 import EventLog from "./EventLog";
 import { useToast } from "@/context/ToastContext";
+import { useActivityFeed } from "@/context/ActivityFeedContext";
 
 type ViewRole = "buyer" | "seller";
 
@@ -37,6 +38,7 @@ export default function OrderDetails({
   const [showConfetti, setShowConfetti] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const { recordActivity } = useActivityFeed();
 
   const handleConfirmReceipt = async () => {
     setIsProcessing(true);
@@ -59,6 +61,13 @@ export default function OrderDetails({
     }));
     setIsProcessing(false);
     setShowConfetti(true);
+    recordActivity({
+      type: "order",
+      severity: "success",
+      title: "Order released",
+      description: "Funds were released after the buyer confirmed receipt.",
+      href: "/dashboard/orders",
+    });
     toast({
       title: "Receipt confirmed",
       description: "Funds have been released from escrow.",
@@ -86,6 +95,13 @@ export default function OrderDetails({
       ],
     }));
     setIsProcessing(false);
+    recordActivity({
+      type: "order",
+      severity: "warning",
+      title: "Dispute opened",
+      description: "The escrow was frozen pending review.",
+      href: "/dashboard/orders",
+    });
     toast({
       title: "Dispute opened",
       description: "The transaction has been frozen pending arbitration.",
@@ -113,6 +129,13 @@ export default function OrderDetails({
       ],
     }));
     setIsProcessing(false);
+    recordActivity({
+      type: "listing",
+      severity: "success",
+      title: "Delivery proof submitted",
+      description: "The seller shared proof of delivery for the escrowed order.",
+      href: "/dashboard/orders",
+    });
     toast({
       title: "Delivery submitted",
       description: "Your proof of delivery has been recorded.",
