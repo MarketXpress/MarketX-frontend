@@ -14,7 +14,6 @@ import {
   EscrowState,
   EscrowTransaction,
   mockTransaction,
-  ESCROW_STATES,
 } from "@/lib/escrowData";
 import { cn } from "@/lib/utils";
 import TransactionTimeline from "./TransactionTimeline";
@@ -41,10 +40,6 @@ export default function OrderDetails({
   const [isProcessing, setIsProcessing] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const { toast } = useToast();
-
-  const currentStateIndex = ESCROW_STATES.findIndex(
-    (s) => s.state === transaction.currentState,
-  );
 
   const handleConfirmReceipt = async () => {
     setIsProcessing(true);

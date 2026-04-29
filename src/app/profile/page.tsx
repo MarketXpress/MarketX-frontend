@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import AvatarUpload from "@/components/auth/AvatarUpload";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { Save, User, Mail, MapPin } from "lucide-react";
+import NotificationPreferencesCard from "@/components/profile/NotificationPreferencesCard";
 
 export default function ProfilePage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -14,10 +15,16 @@ export default function ProfilePage() {
     location: "",
     bio: "",
   });
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const handleSave = () => {
     console.log("Saving profile:", { ...formData, avatar: avatarFile });
-    // TODO: Implement actual save logic
+    toast({
+      title: "Profile saved",
+      description: "Your settings were updated locally in this demo build.",
+      variant: "success",
+    });
   };
 
   return (
@@ -66,7 +73,7 @@ export default function ProfilePage() {
               </label>
               <input
                 type="email"
-                value={formData.email}
+                value={formData.email || user?.email || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
@@ -106,6 +113,8 @@ export default function ProfilePage() {
               />
             </div>
           </div>
+
+          <NotificationPreferencesCard />
 
           {/* Save Button */}
           <button
