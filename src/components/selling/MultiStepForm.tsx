@@ -7,6 +7,7 @@ import { Check, ChevronRight, Save } from "lucide-react";
 import { listingSchema, ListingFormData } from "@/lib/validations/listing";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/context/ToastContext";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 import Step1Details from "./Step1Details";
 import Step2Pricing from "./Step2Pricing";
@@ -24,6 +25,7 @@ export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isDeploying, setIsDeploying] = useState(false);
   const [isDeployed, setIsDeployed] = useState(false);
+  const [showDeployConfirm, setShowDeployConfirm] = useState(false);
 
   const methods = useForm<ListingFormData>({
     resolver: zodResolver(listingSchema),
@@ -83,9 +85,13 @@ export default function MultiStepForm() {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
-  const onSubmit = async (data: ListingFormData) => {
+  const onSubmit = async (_data: ListingFormData) => {
+    setShowDeployConfirm(true);
+  };
+
+  const handleDeploy = async () => {
+    setShowDeployConfirm(false);
     setIsDeploying(true);
-    // Simulate Soroban contract deployment sequence
     await new Promise(resolve => setTimeout(resolve, 3000));
     setIsDeploying(false);
     setIsDeployed(true);
@@ -94,6 +100,15 @@ export default function MultiStepForm() {
 
   return (
     <FormProvider {...methods}>
+      <ConfirmModal
+        isOpen={showDeployConfirm}
+        title="Sign & Deploy Listing?"
+        description="This will deploy your listing as a Soroban smart contract on the Stellar network. The transaction is irreversible once signed."
+        confirmLabel="Sign & Deploy"
+        variant="warning"
+        onConfirm={handleDeploy}
+        onCancel={() => setShowDeployConfirm(false)}
+      />
       <div className="w-full flex-col flex gap-10">
         {/* Stepper Header */}
         <div className="flex items-center justify-between relative">
