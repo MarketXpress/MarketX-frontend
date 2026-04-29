@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ShoppingBag, Search, Menu, X } from "lucide-react";
+import Image from "next/image";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import { useState, Suspense } from "react";
 import WalletConnect from "@/components/auth/WalletConnect";
 import SearchBar from "./SearchBar";
@@ -16,6 +17,11 @@ const NAV_LINKS = [
   { name: "Profile", href: "/profile" },
 ];
 
+function SearchBarSlot() {
+  const searchParams = useSearchParams();
+  return <SearchBar key={searchParams.toString()} />;
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -28,10 +34,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto backdrop-blur-2xl bg-black/20 border border-white/10 rounded-3xl px-6 py-3 flex items-center justify-between shadow-2xl">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2 group">
-            <img 
-              src="/logo.png" 
-              alt="MarketX Logo" 
-              className="h-9 sm:h-11 object-contain group-hover:scale-105 transition-transform"
+            <Image
+              src="/logo.png"
+              alt="MarketX Logo"
+              width={180}
+              height={44}
+              priority
+              className="h-9 w-auto sm:h-11 object-contain group-hover:scale-105 transition-transform"
+              sizes="(max-width: 640px) 140px, 180px"
             />
           </Link>
 
@@ -55,7 +65,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4">
           <Suspense fallback={<div className="hidden sm:block w-32 lg:w-48 h-8 rounded-xl bg-white/5 animate-pulse" />}>
-            <SearchBar />
+            <SearchBarSlot />
           </Suspense>
 
           <ThemeToggle />
