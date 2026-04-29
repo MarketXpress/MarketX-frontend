@@ -72,6 +72,7 @@ export default function MarketplaceSection() {
   const rawPage = Number(searchParams.get("page") || "1");
   const currentPage = Number.isNaN(rawPage) || rawPage < 1 ? 1 : rawPage;
   const totalPages = Math.max(1, Math.ceil(filteredAssets.length / PAGE_SIZE));
+  const totalCount = filteredAssets.length;
   const page = Math.min(currentPage, totalPages);
   const paginatedAssets = filteredAssets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const hasMore = page < totalPages;
@@ -95,7 +96,7 @@ export default function MarketplaceSection() {
           <h2 className="text-4xl md:text-6xl font-black tracking-tighter">Marketplace</h2>
           <p className="text-neutral-400 max-w-xl">
             {searchParams.get("q") 
-              ? `Results for "${searchParams.get("q")}" (${filteredAssets.totalCount} total)`
+              ? `Results for "${searchParams.get("q")}" (${totalCount} total)`
               : "Discover verified assets currently secured in escrow."}
           </p>
         </ScrollReveal>
@@ -108,7 +109,7 @@ export default function MarketplaceSection() {
               <Filter className="w-4 h-4" /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
             </button>
             <span className="text-sm font-medium text-neutral-400 px-4">
-               {isLoading ? "Loading..." : `${filteredAssets.totalCount} Results`}
+               {isLoading ? "Loading..." : `${totalCount} Results`}
             </span>
         </ScrollReveal>
       </div>

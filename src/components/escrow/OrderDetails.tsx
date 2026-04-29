@@ -14,14 +14,12 @@ import {
   EscrowState,
   EscrowTransaction,
   mockTransaction,
-  ESCROW_STATES,
 } from "@/lib/escrowData";
 import { cn } from "@/lib/utils";
 import TransactionTimeline from "./TransactionTimeline";
 import CountdownTimer from "./CountdownTimer";
 import ConfettiSuccess from "./ConfettiSuccess";
 import EventLog from "./EventLog";
-import { useToast } from "@/context/ToastContext";
 import { useToast } from "@/context/ToastContext";
 
 type ViewRole = "buyer" | "seller";
@@ -38,12 +36,7 @@ export default function OrderDetails({
   const [viewRole, setViewRole] = useState<ViewRole>("buyer");
   const [showConfetti, setShowConfetti] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { addToast } = useToast();
   const { toast } = useToast();
-
-  const currentStateIndex = ESCROW_STATES.findIndex(
-    (s) => s.state === transaction.currentState,
-  );
 
   const handleConfirmReceipt = async () => {
     setIsProcessing(true);
