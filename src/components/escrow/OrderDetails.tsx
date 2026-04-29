@@ -21,8 +21,10 @@ import CountdownTimer from "./CountdownTimer";
 import ConfettiSuccess from "./ConfettiSuccess";
 import EventLog from "./EventLog";
 import { useToast } from "@/context/ToastContext";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 type ViewRole = "buyer" | "seller";
+type PendingAction = "confirm-receipt" | "open-dispute" | "submit-delivery" | null;
 
 interface OrderDetailsProps {
   initialTransaction?: EscrowTransaction;
@@ -36,6 +38,7 @@ export default function OrderDetails({
   const [viewRole, setViewRole] = useState<ViewRole>("buyer");
   const [showConfetti, setShowConfetti] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const { toast } = useToast();
 
   const handleConfirmReceipt = async () => {
@@ -120,6 +123,14 @@ export default function OrderDetails({
     });
   };
 
+  const handleModalConfirm = () => {
+    const action = pendingAction;
+    setPendingAction(null);
+    if (action === "confirm-receipt") handleConfirmReceipt();
+    else if (action === "open-dispute") handleOpenDispute();
+    else if (action === "submit-delivery") handleSubmitDelivery();
+  };
+
   const closeConfetti = useCallback(() => setShowConfetti(false), []);
 
   const needsAction = () => {
@@ -135,9 +146,45 @@ export default function OrderDetails({
 
   const actionNeeded = needsAction();
 
+  const modalConfig: Record<
+    NonNullable<PendingAction>,
+    { title: string; description: string; confirmLabel: string; variant: "danger" | "warning" | "default" }
+  > = {
+    "confirm-receipt": {
+      title: "Confirm Receipt?",
+      description:
+        "This will release 2,500 XLM from escrow to the seller. This action cannot be undone.",
+      confirmLabel: "Release Funds",
+      variant: "default",
+    },
+    "open-dispute": {
+      title: "Open a Dispute?",
+      description:
+        "This will freeze the escrow and initiate arbitration. The transaction cannot proceed until the dispute is resolved.",
+      confirmLabel: "Open Dispute",
+      variant: "danger",
+    },
+    "submit-delivery": {
+      title: "Submit Delivery Proof?",
+      description:
+        "Once submitted, the buyer will be notified to confirm receipt or open a dispute. You cannot retract this action.",
+      confirmLabel: "Submit Proof",
+      variant: "default",
+    },
+  };
+
   return (
     <div className="space-y-10">
       <ConfettiSuccess show={showConfetti} onClose={closeConfetti} />
+
+      {pendingAction && (
+        <ConfirmModal
+          isOpen
+          {...modalConfig[pendingAction]}
+          onConfirm={handleModalConfirm}
+          onCancel={() => setPendingAction(null)}
+        />
+      )}
 
       {/* Role Switcher */}
       <div className="flex items-center gap-3">
@@ -311,7 +358,7 @@ export default function OrderDetails({
                   transaction.currentState === "in_transit" && (
                     <div className="space-y-3">
                       <button
-                        onClick={handleConfirmReceipt}
+                        onClick={() => setPendingAction("confirm-receipt")}
                         disabled={isProcessing}
                         className={cn(
                           "w-full px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
@@ -324,7 +371,7 @@ export default function OrderDetails({
                         {isProcessing ? "Processing…" : "Confirm Receipt"}
                       </button>
                       <button
-                        onClick={handleOpenDispute}
+                        onClick={() => setPendingAction("open-dispute")}
                         disabled={isProcessing}
                         className={cn(
                           "w-full px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
@@ -342,7 +389,7 @@ export default function OrderDetails({
                 {viewRole === "seller" &&
                   transaction.currentState === "in_escrow" && (
                     <button
-                      onClick={handleSubmitDelivery}
+                      onClick={() => setPendingAction("submit-delivery")}
                       disabled={isProcessing}
                       className={cn(
                         "w-full px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
