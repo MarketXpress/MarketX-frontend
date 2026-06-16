@@ -16,7 +16,7 @@ export default function SearchBar() {
 
   // Push to URL when debounced query changes
   useEffect(() => {
-    if (debouncedQuery === searchParams.get("q")) return;
+    if (debouncedQuery === (searchParams.get("q") ?? "")) return;
 
     const params = new URLSearchParams(searchParams.toString());
     if (debouncedQuery) {

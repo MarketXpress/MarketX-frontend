@@ -13,6 +13,7 @@
 |---|---|
 | Theme | Clean Light — white surfaces, `#F9FAFB` page bg, `#F3F4F6` subtle fills |
 | Accent colour | Emerald `#059669` (hover `#047857`, tint bg `#ECFDF5`, tint border `#A7F3D0`) |
+| Font | Sora — geometric, Web3-native energy. Weights used: 400 (body), 600 (labels/buttons), 700 (subheadings), 800/900 (prices, headlines) |
 | Layout pattern | Jumia/Konga-style — top navbar with search + cart, emerald category bar, product grids |
 | Dashboard nav | Global top navbar + pill tab subnav per page |
 | Hero | Dark main banner + two side promo banners (3-column layout) |
