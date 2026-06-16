@@ -66,8 +66,10 @@ export const viewport = {
 };
 
 import Navbar from "@/components/layout/Navbar";
+import CategoryBar from "@/components/layout/CategoryBar";
 import AppProviders from "@/providers/AppProviders";
 import { PageTransition } from "@/components/animations/PageTransition";
+import { Suspense } from "react";
 
 export default function RootLayout({
   children,
@@ -78,6 +80,9 @@ export default function RootLayout({
         <AppProviders>
           <a href="#main-content" className="skip-nav">Skip to main content</a>
           <Navbar />
+          <Suspense>
+            <CategoryBar />
+          </Suspense>
           <main id="main-content">
             <PageTransition>
               {children}
