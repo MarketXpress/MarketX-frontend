@@ -1,9 +1,10 @@
+import Link from "next/link";
 import { Star } from "lucide-react";
 import { ProductMock } from "@/lib/mockData";
 
 export default function ProductCard({ product }: { product: ProductMock }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow group">
+    <Link href={`/product/${product.id}`} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow group block">
       {/* Image placeholder */}
       <div className="relative h-36 bg-gray-100 flex items-center justify-center">
         <div className="w-16 h-16 bg-gray-200 rounded-lg" />
@@ -55,6 +56,6 @@ export default function ProductCard({ product }: { product: ProductMock }) {
           + Add to Cart
         </button>
       </div>
-    </div>
+    </Link>
   );
 }
