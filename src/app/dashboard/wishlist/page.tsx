@@ -1,10 +1,23 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import DashboardSubnav from "@/components/dashboard/DashboardSubnav";
 import ProductCard from "@/components/marketplace/ProductCard";
 import { mockProducts } from "@/lib/mockData";
-
-const wishlistItems = mockProducts.slice(0, 6);
+import { getWishlistProducts, subscribeToWishlist } from "@/lib/wishlistStore";
 
 export default function WishlistPage() {
+  const [wishlistItems, setWishlistItems] = useState(() =>
+    getWishlistProducts(mockProducts)
+  );
+
+  useEffect(() => {
+    const syncWishlist = () => setWishlistItems(getWishlistProducts(mockProducts));
+
+    syncWishlist();
+    return subscribeToWishlist(syncWishlist);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="pt-14">
