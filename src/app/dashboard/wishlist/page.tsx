@@ -1,10 +1,23 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import DashboardSubnav from "@/components/dashboard/DashboardSubnav";
 import ProductCard from "@/components/marketplace/ProductCard";
 import { mockProducts } from "@/lib/mockData";
-
-const wishlistItems = mockProducts.slice(0, 6);
+import { getWishlist } from "@/lib/wishlistStore";
 
 export default function WishlistPage() {
+  const [wishlistIds, setWishlistIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const reload = () => setWishlistIds(getWishlist());
+    reload();
+    window.addEventListener("wishlist-change", reload);
+    return () => window.removeEventListener("wishlist-change", reload);
+  }, []);
+
+  const wishlistItems = mockProducts.filter((p) => wishlistIds.includes(p.id));
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="pt-14">
