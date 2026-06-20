@@ -9,17 +9,39 @@ import { Save, User, Mail, MapPin } from "lucide-react";
 import NotificationPreferencesCard from "@/components/profile/NotificationPreferencesCard";
 import ActivityFeedPanel from "@/components/activity/ActivityFeedPanel";
 
+function ProfileSkeleton() {
+  return (
+    <main className="min-h-screen pt-14 pb-20 px-6 bg-gray-50">
+      <div className="max-w-3xl mx-auto py-8 space-y-6 animate-pulse">
+        <div className="h-8 w-48 bg-gray-200 rounded-lg" />
+        <div className="h-4 w-72 bg-gray-100 rounded" />
+        <div className="p-6 bg-white border border-gray-200 rounded-2xl space-y-4">
+          <div className="h-20 w-20 bg-gray-200 rounded-full" />
+        </div>
+        <div className="p-6 bg-white border border-gray-200 rounded-2xl space-y-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-10 bg-gray-100 rounded-lg" />
+          ))}
+        </div>
+        <div className="h-40 bg-white border border-gray-200 rounded-2xl" />
+      </div>
+    </main>
+  );
+}
+
 export default function ProfilePage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     location: "",
     bio: "",
   });
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { toast } = useToast();
   const { recordActivity } = useActivityFeed();
+
+  // Graceful fallback — backend not hosted yet
+  if (isLoading || !user) return <ProfileSkeleton />;
 
   const handleSave = () => {
     console.log("Saving profile:", { ...formData, avatar: avatarFile });
@@ -68,14 +90,13 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter your name"
                 className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm"
               />
             </div>
 
+            {/* Email — read-only, sourced from JWT */}
             <div>
               <label className="flex items-center gap-2 text-xs font-bold text-gray-700 mb-1.5">
                 <Mail className="w-4 h-4" />
@@ -83,13 +104,11 @@ export default function ProfilePage() {
               </label>
               <input
                 type="email"
-                value={formData.email || user?.email || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                placeholder="your@email.com"
-                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm"
+                value={user.email}
+                readOnly
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm cursor-not-allowed"
               />
+              <p className="mt-1 text-xs text-gray-400">Email cannot be changed here.</p>
             </div>
 
             <div>
@@ -100,23 +119,17 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={formData.location}
-                onChange={(e) =>
-                  setFormData({ ...formData, location: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 placeholder="City, Country"
                 className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-gray-700 mb-1.5 block">
-                Bio
-              </label>
+              <label className="text-xs font-bold text-gray-700 mb-1.5 block">Bio</label>
               <textarea
                 value={formData.bio}
-                onChange={(e) =>
-                  setFormData({ ...formData, bio: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 placeholder="Tell us about yourself..."
                 rows={4}
                 className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-500 text-sm resize-none"
