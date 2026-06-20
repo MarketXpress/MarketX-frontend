@@ -28,7 +28,7 @@ export default function HeroBanners() {
       {/* Side banners (1/3 width, stacked) */}
       <div className="flex-1 flex flex-col gap-3">
         <Link
-          href="/?cat=Electronics"
+          href="/?category=Electronics"
           className="flex-1 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-4 hover:border-emerald-300 transition-colors group"
         >
           <div className="text-lg mb-1">📱</div>
@@ -36,7 +36,7 @@ export default function HeroBanners() {
           <p className="text-[11px] text-gray-500 mt-0.5">Up to 30% off</p>
         </Link>
         <Link
-          href="/?cat=Fashion"
+          href="/?category=Fashion"
           className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-4 hover:border-blue-300 transition-colors group"
         >
           <div className="text-lg mb-1">🌟</div>

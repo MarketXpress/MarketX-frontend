@@ -17,7 +17,7 @@ const CATEGORIES = [
 export default function CategoryBar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const currentCat = searchParams.get("cat") ?? "";
+  const currentCategory = searchParams.get("category") ?? searchParams.get("cat") ?? "";
 
   if (
     pathname.startsWith("/auth") ||
@@ -43,9 +43,9 @@ export default function CategoryBar() {
         {CATEGORIES.map((cat) => (
           <Link
             key={cat.value || "all"}
-            href={cat.value ? `/?cat=${cat.value}` : "/"}
+            href={cat.value ? `/?category=${cat.value}` : "/"}
             className={`px-3 py-1 text-xs font-semibold whitespace-nowrap transition-colors rounded-sm ${
-              currentCat === cat.value && pathname !== "/marketplace"
+              currentCategory === cat.value && pathname !== "/marketplace"
                 ? "text-white font-bold bg-black/20"
                 : "text-emerald-100 hover:text-white hover:bg-black/10"
             }`}

@@ -19,7 +19,7 @@ export default function CategoryChips() {
         {CHIPS.map((chip) => (
           <Link
             key={chip.value || "more"}
-            href={chip.value ? `/?cat=${chip.value}` : "/"}
+            href={chip.value ? `/?category=${chip.value}` : "/"}
             className="flex flex-col items-center gap-1.5 p-3 bg-white border border-gray-200 rounded-xl hover:border-emerald-400 hover:bg-emerald-50 transition-colors group"
           >
             <span className="text-2xl">{chip.emoji}</span>
