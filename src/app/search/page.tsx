@@ -1,29 +1,31 @@
-"use client";
-
 import Link from "next/link";
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/marketplace/ProductCard";
 import MarketplaceEmptyState from "@/components/marketplace/MarketplaceEmptyState";
 import { mockProducts } from "@/lib/mockData";
 
-export default function SearchPage() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get("q")?.trim() ?? "";
+type SearchParams = {
+  q?: string | string[];
+};
+
+type SearchPageProps = {
+  searchParams?: SearchParams | Promise<SearchParams>;
+};
+
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const params = (await searchParams) ?? {};
+  const rawQuery = Array.isArray(params.q) ? params.q[0] : params.q;
+  const query = rawQuery?.trim() ?? "";
   const normalizedQuery = query.toLowerCase();
-
-  const filteredProducts = useMemo(() => {
-    if (!normalizedQuery) return [];
-
-    return mockProducts.filter((product) =>
-      [
-        product.name,
-        product.category,
-        product.seller,
-        product.description ?? "",
-      ].some((value) => value.toLowerCase().includes(normalizedQuery))
-    );
-  }, [normalizedQuery]);
+  const filteredProducts = normalizedQuery
+    ? mockProducts.filter((product) =>
+        [
+          product.name,
+          product.category,
+          product.seller,
+          product.description ?? "",
+        ].some((value) => value.toLowerCase().includes(normalizedQuery))
+      )
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
