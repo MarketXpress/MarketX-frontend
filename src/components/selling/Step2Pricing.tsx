@@ -28,7 +28,7 @@ export default function Step2Pricing() {
               type="number"
               step="0.01"
               aria-invalid={!!errors.priceAmount}
-              aria-describedby={errors.priceAmount ? "price-error price-hint" : "price-hint"}
+              aria-describedby={errors.priceAmount ? "price-error" : undefined}
               {...register("priceAmount", { valueAsNumber: true })}
               placeholder="0.00"
               className={cn(
@@ -45,7 +45,7 @@ export default function Step2Pricing() {
               <span className="text-lg font-bold text-gray-400">XLM</span>
             </div>
           </div>
-          <p id="price-hint" className="text-xs text-gray-400">Enter the price in XLM. Funds are held in escrow until both parties confirm.</p>
+          <p className="text-xs text-gray-400">Enter the price in XLM. Funds are held in escrow until both parties confirm.</p>
           {errors.priceAmount && <p id="price-error" className="text-xs text-red-500 font-medium" role="alert">{errors.priceAmount.message}</p>}
         </div>
 
@@ -60,7 +60,7 @@ export default function Step2Pricing() {
                 id="delivery-timeframe"
                 type="number"
                 aria-invalid={!!errors.deliveryTimeframe}
-                aria-describedby={errors.deliveryTimeframe ? "delivery-error delivery-hint" : "delivery-hint"}
+                aria-describedby={errors.deliveryTimeframe ? "delivery-error" : undefined}
                 {...register("deliveryTimeframe", { valueAsNumber: true })}
                 placeholder="e.g. 7"
                 className={cn(
@@ -74,7 +74,7 @@ export default function Step2Pricing() {
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">Days</span>
             </div>
-            <p id="delivery-hint" className="text-xs text-gray-400 mt-1">Time allowed to deliver the asset after escrow funding.</p>
+            <p className="text-xs text-gray-400 mt-1">Time allowed to deliver the asset after escrow funding.</p>
             {errors.deliveryTimeframe && <p id="delivery-error" className="text-xs text-red-500 font-medium" role="alert">{errors.deliveryTimeframe.message}</p>}
           </div>
 
@@ -86,7 +86,7 @@ export default function Step2Pricing() {
                 id="dispute-period"
                 type="number"
                 aria-invalid={!!errors.disputePeriod}
-                aria-describedby={errors.disputePeriod ? "dispute-error dispute-hint" : "dispute-hint"}
+                aria-describedby={errors.disputePeriod ? "dispute-error" : undefined}
                 {...register("disputePeriod", { valueAsNumber: true })}
                 placeholder="e.g. 3"
                 className={cn(
@@ -100,7 +100,7 @@ export default function Step2Pricing() {
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">Days</span>
             </div>
-            <p id="dispute-hint" className="text-xs text-gray-400 mt-1">Duration the buyer has to dispute after delivery.</p>
+            <p className="text-xs text-gray-400 mt-1">Duration the buyer has to dispute after delivery.</p>
             {errors.disputePeriod && <p id="dispute-error" className="text-xs text-red-500 font-medium" role="alert">{errors.disputePeriod.message}</p>}
           </div>
         </div>

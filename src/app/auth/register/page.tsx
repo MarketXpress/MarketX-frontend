@@ -152,11 +152,9 @@ export default function RegisterPage() {
                   onBlur={() => setTouched((p) => ({ ...p, firstName: true }))}
                   placeholder="John"
                   className={fieldClass("firstName", touched.firstName)}
-                  aria-invalid={!!errors.firstName && touched.firstName}
-                  aria-describedby={errors.firstName && touched.firstName ? "register-first-name-error" : undefined}
                 />
                 {errors.firstName && touched.firstName && (
-                  <p id="register-first-name-error" className="text-xs text-red-600 mt-1" role="alert">
+                  <p className="text-xs text-red-600 mt-1" role="alert">
                     {errors.firstName}
                   </p>
                 )}
@@ -173,11 +171,9 @@ export default function RegisterPage() {
                   onBlur={() => setTouched((p) => ({ ...p, lastName: true }))}
                   placeholder="Doe"
                   className={fieldClass("lastName", touched.lastName)}
-                  aria-invalid={!!errors.lastName && touched.lastName}
-                  aria-describedby={errors.lastName && touched.lastName ? "register-last-name-error" : undefined}
                 />
                 {errors.lastName && touched.lastName && (
-                  <p id="register-last-name-error" className="text-xs text-red-600 mt-1" role="alert">
+                  <p className="text-xs text-red-600 mt-1" role="alert">
                     {errors.lastName}
                   </p>
                 )}
@@ -196,11 +192,9 @@ export default function RegisterPage() {
                 onBlur={() => setTouched((p) => ({ ...p, email: true }))}
                 placeholder="name@example.com"
                 className={fieldClass("email", touched.email)}
-                aria-invalid={!!errors.email && touched.email}
-                aria-describedby={errors.email && touched.email ? "register-email-error" : undefined}
               />
               {errors.email && touched.email && (
-                <p id="register-email-error" className="text-xs text-red-600 mt-1" role="alert">
+                <p className="text-xs text-red-600 mt-1" role="alert">
                   {errors.email}
                 </p>
               )}
@@ -218,11 +212,9 @@ export default function RegisterPage() {
                 onBlur={() => setTouched((p) => ({ ...p, password: true }))}
                 placeholder="Minimum 8 characters"
                 className={fieldClass("password", touched.password)}
-                aria-invalid={!!errors.password && touched.password}
-                aria-describedby={errors.password && touched.password ? "register-password-error" : undefined}
               />
               {errors.password && touched.password && (
-                <p id="register-password-error" className="text-xs text-red-600 mt-1" role="alert">
+                <p className="text-xs text-red-600 mt-1" role="alert">
                   {errors.password}
                 </p>
               )}

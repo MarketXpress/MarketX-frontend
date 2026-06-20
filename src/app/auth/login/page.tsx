@@ -114,11 +114,10 @@ function LoginForm() {
                 onBlur={() => setTouched((p) => ({ ...p, email: true }))}
                 placeholder="name@example.com"
                 className={fieldClass("email", touched.email)}
-                aria-invalid={!!errors.email && touched.email}
-                aria-describedby={errors.email && touched.email ? "login-email-error" : undefined}
+                aria-invalid={!!errors.email}
               />
               {errors.email && touched.email && (
-                <p id="login-email-error" className="text-xs text-red-600 mt-1" role="alert">{errors.email}</p>
+                <p className="text-xs text-red-600 mt-1" role="alert">{errors.email}</p>
               )}
             </div>
 
@@ -139,11 +138,10 @@ function LoginForm() {
                 onBlur={() => setTouched((p) => ({ ...p, password: true }))}
                 placeholder="••••••••"
                 className={fieldClass("password", touched.password)}
-                aria-invalid={!!errors.password && touched.password}
-                aria-describedby={errors.password && touched.password ? "login-password-error" : undefined}
+                aria-invalid={!!errors.password}
               />
               {errors.password && touched.password && (
-                <p id="login-password-error" className="text-xs text-red-600 mt-1" role="alert">{errors.password}</p>
+                <p className="text-xs text-red-600 mt-1" role="alert">{errors.password}</p>
               )}
             </div>
 

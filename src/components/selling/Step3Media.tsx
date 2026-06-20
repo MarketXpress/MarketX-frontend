@@ -59,8 +59,6 @@ export default function Step3Media() {
           {...getRootProps()}
           role="button"
           aria-label="Upload images by dragging and dropping or clicking"
-          aria-invalid={!!errors.media}
-          aria-describedby={errors.media ? "media-error media-hint" : "media-hint"}
           tabIndex={0}
           className={cn(
             "border-2 border-dashed rounded-xl p-12 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300",
@@ -71,12 +69,7 @@ export default function Step3Media() {
                 : "border-gray-200 hover:border-emerald-500/50 hover:bg-gray-50"
           )}
         >
-          <input
-            {...getInputProps()}
-            aria-label="File upload"
-            aria-invalid={!!errors.media}
-            aria-describedby={errors.media ? "media-error media-hint" : "media-hint"}
-          />
+          <input {...getInputProps()} aria-label="File upload" />
           <div className={cn(
             "w-20 h-20 rounded-full flex items-center justify-center mb-6 transition-colors duration-300",
             isDragActive ? "bg-emerald-500 text-gray-900 shadow-[0_0_30px_rgba(16,185,129,0.5)]" : "bg-gray-100 text-gray-500 shadow-inner"
@@ -86,12 +79,12 @@ export default function Step3Media() {
           <h3 className="text-xl font-bold text-gray-900 mb-2">
             {isDragActive ? "Drop your files here!" : "Drag & drop your images"}
           </h3>
-          <p id="media-hint" className="text-gray-400 text-sm max-w-sm">
+          <p className="text-gray-400 text-sm max-w-sm">
             Supports JPG, PNG, GIF, and WEBP. Maximum file size 5MB. You can upload multiple files at once.
           </p>
         </div>
 
-        {errors.media && <p id="media-error" className="text-sm text-red-500 font-bold" role="alert">{errors.media.message?.toString()}</p>}
+        {errors.media && <p className="text-sm text-red-500 font-bold" role="alert">{errors.media.message?.toString()}</p>}
 
         {/* Previews Grid */}
         {previews.length > 0 && (
