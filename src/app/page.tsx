@@ -4,34 +4,7 @@ import FlashSaleSection from "@/components/home/FlashSaleSection";
 import CategoryChips from "@/components/home/CategoryChips";
 import HomeFooter from "@/components/home/HomeFooter";
 import ProductCard from "@/components/marketplace/ProductCard";
-import ProductCardSkeleton from "@/components/marketplace/ProductCardSkeleton";
 import { mockProducts } from "@/lib/mockData";
-
-async function getHomepageProducts() {
-  return mockProducts;
-}
-
-function ProductGridSkeleton() {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-      {Array.from({ length: 10 }).map((_, index) => (
-        <ProductCardSkeleton key={index} />
-      ))}
-    </div>
-  );
-}
-
-async function ProductGrid() {
-  const products = await getHomepageProducts();
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-      {products.map((p) => (
-        <ProductCard key={p.id} product={p} />
-      ))}
-    </div>
-  );
-}
 
 export default function Home() {
   return (
@@ -62,9 +35,11 @@ export default function Home() {
               View All →
             </span>
           </div>
-          <Suspense fallback={<ProductGridSkeleton />}>
-            <ProductGrid />
-          </Suspense>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {mockProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
         </section>
       </div>
 
