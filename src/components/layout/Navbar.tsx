@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ShoppingCart, Heart, User, Store } from "lucide-react";
-import { useState } from "react";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
@@ -12,6 +12,76 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [query, setQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
+  const accountButtonRef = useRef<HTMLButtonElement>(null);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
+
+  const closeAccountMenu = (restoreFocus = true) => {
+    setAccountOpen(false);
+
+    if (restoreFocus) {
+      accountButtonRef.current?.focus();
+    }
+  };
+
+  const getAccountMenuItems = () =>
+    Array.from(accountMenuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []);
+
+  useEffect(() => {
+    if (!accountOpen) return;
+
+    getAccountMenuItems()[0]?.focus();
+  }, [accountOpen]);
+
+  const handleAccountButtonKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (["ArrowDown", "Enter", " "].includes(e.key)) {
+      e.preventDefault();
+      setAccountOpen(true);
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setAccountOpen(true);
+      requestAnimationFrame(() => getAccountMenuItems().at(-1)?.focus());
+    }
+  };
+
+  const handleAccountMenuKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const menuItems = getAccountMenuItems();
+    const activeIndex = menuItems.findIndex((item) => item === document.activeElement);
+
+    switch (e.key) {
+      case "Escape":
+        e.preventDefault();
+        closeAccountMenu();
+        break;
+      case "Tab": {
+        e.preventDefault();
+        const nextIndex = e.shiftKey
+          ? (activeIndex - 1 + menuItems.length) % menuItems.length
+          : (activeIndex + 1) % menuItems.length;
+        menuItems[nextIndex]?.focus();
+        break;
+      }
+      case "ArrowDown":
+        e.preventDefault();
+        menuItems[(activeIndex + 1) % menuItems.length]?.focus();
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        menuItems[(activeIndex - 1 + menuItems.length) % menuItems.length]?.focus();
+        break;
+      case "Home":
+        e.preventDefault();
+        menuItems[0]?.focus();
+        break;
+      case "End":
+        e.preventDefault();
+        menuItems.at(-1)?.focus();
+        break;
+      default:
+        break;
+    }
+  };
 
   if (pathname.startsWith("/auth")) return null;
 
@@ -72,7 +142,13 @@ export default function Navbar() {
         {user ? (
           <div className="relative">
             <button
+              ref={accountButtonRef}
+              aria-expanded={accountOpen}
+              aria-haspopup="menu"
+              aria-controls="account-menu"
+              aria-label="Account menu"
               onClick={() => setAccountOpen((v) => !v)}
+              onKeyDown={handleAccountButtonKeyDown}
               className="flex items-center gap-1.5 p-1.5 rounded-md hover:bg-gray-100 transition-colors"
             >
               <div className="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold">
@@ -80,16 +156,23 @@ export default function Navbar() {
               </div>
             </button>
             {accountOpen && (
-              <div className="absolute right-0 top-10 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50">
+              <div
+                id="account-menu"
+                ref={accountMenuRef}
+                role="menu"
+                aria-label="Account menu"
+                onKeyDown={handleAccountMenuKeyDown}
+                className="absolute right-0 top-10 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50"
+              >
                 <div className="px-3 py-2 border-b border-gray-100">
                   <p className="text-xs font-semibold text-gray-900 truncate">{user.email}</p>
                   <p className="text-[10px] text-gray-400 capitalize">{user.role.toLowerCase()}</p>
                 </div>
-                <Link href="/dashboard/orders" onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">My Orders</Link>
-                <Link href="/dashboard/selling" onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Selling Dashboard</Link>
-                <Link href="/dashboard/wallet" onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Wallet</Link>
-                <Link href="/profile" onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</Link>
-                <button onClick={() => { logout(); setAccountOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Sign Out</button>
+                <Link href="/dashboard/orders" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">My Orders</Link>
+                <Link href="/dashboard/selling" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Selling Dashboard</Link>
+                <Link href="/dashboard/wallet" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Wallet</Link>
+                <Link href="/profile" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Profile</Link>
+                <button role="menuitem" tabIndex={-1} onClick={() => { logout(); setAccountOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none">Sign Out</button>
               </div>
             )}
           </div>
