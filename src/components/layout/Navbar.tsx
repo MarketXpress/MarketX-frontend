@@ -1,27 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ShoppingCart, Heart, User, Store } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, logout } = useAuth();
   const [query, setQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
 
   if (pathname.startsWith("/auth")) return null;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      window.location.href = `/?q=${encodeURIComponent(query.trim())}`;
-    }
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) return;
+
+    router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
   };
 
   return (
@@ -51,7 +50,7 @@ export default function Navbar() {
 
       {/* Right icons */}
       <div className="flex items-center gap-1 shrink-0">
-        {mounted && !user && (
+        {!user && (
           <Link
             href="/auth/register"
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-md transition-colors"
@@ -70,7 +69,7 @@ export default function Navbar() {
           <span className="absolute top-1 right-1 w-4 h-4 bg-emerald-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
         </Link>
 
-        {mounted && user ? (
+        {user ? (
           <div className="relative">
             <button
               onClick={() => setAccountOpen((v) => !v)}
