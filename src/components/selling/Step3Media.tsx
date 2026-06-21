@@ -69,7 +69,7 @@ export default function Step3Media() {
                 : "border-gray-200 hover:border-emerald-500/50 hover:bg-gray-50"
           )}
         >
-          <input {...getInputProps()} aria-label="File upload" />
+          <input {...getInputProps()} aria-label="File upload" aria-describedby={errors.media ? "media-error" : undefined} />
           <div className={cn(
             "w-20 h-20 rounded-full flex items-center justify-center mb-6 transition-colors duration-300",
             isDragActive ? "bg-emerald-500 text-gray-900 shadow-[0_0_30px_rgba(16,185,129,0.5)]" : "bg-gray-100 text-gray-500 shadow-inner"
@@ -84,7 +84,7 @@ export default function Step3Media() {
           </p>
         </div>
 
-        {errors.media && <p className="text-sm text-red-500 font-bold" role="alert">{errors.media.message?.toString()}</p>}
+        {errors.media && <p id="media-error" className="text-sm text-red-500 font-bold" role="alert">{errors.media.message?.toString()}</p>}
 
         {/* Previews Grid */}
         {previews.length > 0 && (
