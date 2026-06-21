@@ -4,6 +4,7 @@ import FlashSaleSection from "@/components/home/FlashSaleSection";
 import CategoryChips from "@/components/home/CategoryChips";
 import HomeFooter from "@/components/home/HomeFooter";
 import ProductCard from "@/components/marketplace/ProductCard";
+import ProductCardSkeleton from "@/components/marketplace/ProductCardSkeleton";
 import { mockProducts } from "@/lib/mockData";
 
 export default function Home() {
@@ -35,11 +36,21 @@ export default function Home() {
               View All →
             </span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {mockProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
+              </div>
+            }
+          >
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {mockProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </Suspense>
         </section>
       </div>
 
