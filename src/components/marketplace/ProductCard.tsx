@@ -1,8 +1,27 @@
+"use client";
+
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, Heart } from "lucide-react";
+import { useEffect, useState } from "react";
 import { ProductMock } from "@/lib/mockData";
+import { isWishlisted, toggleWishlist } from "@/lib/wishlistStore";
 
 export default function ProductCard({ product }: { product: ProductMock }) {
+  const [wishlisted, setWishlisted] = useState(false);
+
+  useEffect(() => {
+    const update = () => setWishlisted(isWishlisted(product.id));
+    update();
+    window.addEventListener("wishlist-change", update);
+    return () => window.removeEventListener("wishlist-change", update);
+  }, [product.id]);
+
+  function handleWishlist(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setWishlisted(toggleWishlist(product.id));
+  }
+
   return (
     <Link href={`/product/${product.id}`} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow group block">
       {/* Image placeholder */}
@@ -28,6 +47,17 @@ export default function ProductCard({ product }: { product: ProductMock }) {
             New
           </span>
         )}
+        <button
+          onClick={handleWishlist}
+          className="absolute bottom-2 right-2 p-1 rounded-full bg-white/80 hover:bg-white transition-colors"
+          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <Heart
+            className={`w-4 h-4 transition-colors ${
+              wishlisted ? "fill-red-500 text-red-500" : "text-gray-400"
+            }`}
+          />
+        </button>
       </div>
 
       {/* Body */}
