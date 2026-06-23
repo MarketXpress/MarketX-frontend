@@ -1,0 +1,140 @@
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import { fn } from "@storybook/test";
+import React, { useState } from "react";
+import { ConfirmModal } from "./ConfirmModal";
+
+const meta = {
+  title: "Components/ConfirmModal",
+  component: ConfirmModal,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "A modal dialog that asks the user to confirm or cancel a destructive or important action. Supports **danger**, **warning**, and **info** variants with keyboard (Escape) and backdrop dismiss.",
+      },
+    },
+  },
+  args: {
+    open: true,
+    title: "Delete item",
+    message:
+      "This action cannot be undone. The item will be permanently removed.",
+    onConfirm: fn(),
+    onCancel: fn(),
+  },
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["danger", "warning", "info"],
+    },
+    loading: {
+      control: "boolean",
+    },
+  },
+} satisfies Meta<typeof ConfirmModal>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Danger: Story = {
+  args: {
+    variant: "danger",
+    title: "Delete account",
+    message:
+      "All your data, including orders, preferences, and history, will be permanently deleted. This cannot be undone.",
+    confirmLabel: "Delete account",
+  },
+};
+
+export const Warning: Story = {
+  args: {
+    variant: "warning",
+    title: "Publish changes",
+    message:
+      "Publishing will make your changes live immediately. Are you sure you want to continue?",
+    confirmLabel: "Publish",
+  },
+};
+
+export const Info: Story = {
+  args: {
+    variant: "info",
+    title: "Archive project",
+    message:
+      "Archiving this project will hide it from active views. You can restore it later from Settings.",
+    confirmLabel: "Archive",
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    variant: "danger",
+    title: "Delete account",
+    message: "Deleting your account and all associated data…",
+    confirmLabel: "Delete account",
+    loading: true,
+  },
+};
+
+export const ShortMessage: Story = {
+  args: {
+    title: "Remove member",
+    message: "Are you sure you want to remove this member?",
+    confirmLabel: "Remove",
+    variant: "danger",
+  },
+};
+
+export const CustomLabels: Story = {
+  args: {
+    title: "Leave page?",
+    message:
+      "You have unsaved changes. Leaving now will discard them.",
+    confirmLabel: "Leave",
+    cancelLabel: "Stay",
+    variant: "warning",
+  },
+};
+
+function InteractiveDemo() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        type="button"
+        className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700"
+        onClick={() => setOpen(true)}
+      >
+        Open modal
+      </button>
+
+      <ConfirmModal
+        open={open}
+        title="Delete item"
+        message="This action cannot be undone. The item will be permanently removed from the system."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={() => {
+          alert("Confirmed!");
+          setOpen(false);
+        }}
+        onCancel={() => setOpen(false)}
+      />
+    </>
+  );
+}
+
+export const Interactive: Story = {
+  name: "Interactive (open/close)",
+  render: () => <InteractiveDemo />,
+  parameters: {
+    layout: "fullscreen",
+    controls: {
+      disable: true,
+    },
+  },
+};

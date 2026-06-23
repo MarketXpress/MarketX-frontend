@@ -1,0 +1,125 @@
+# ✅ Storybook CI — Build → Accessibility / Interaction Tests → Chromatic
+#
+# Runs on every push to main and on every pull request.
+# Three jobs run in sequence:
+#   1. build    — npm ci + storybook build (catches import / TypeScript errors)
+#   2. test     — test-runner against the static build (a11y + interactions)
+#   3. chromatic — visual regression diff (requires CHROMATIC_PROJECT_TOKEN secret)
+
+name: Storybook
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # ─────────────────────────────────────────
+  # 1. Build the static Storybook
+  # ─────────────────────────────────────────
+  build:
+    name: Build Storybook
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Storybook
+        run: npm run build-storybook
+
+      # Upload the static build so the test and chromatic jobs can reuse it
+      - name: Upload Storybook build
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: storybook-static
+          retention-days: 1
+
+  # ─────────────────────────────────────────
+  # 2. Run accessibility + interaction tests
+  # ─────────────────────────────────────────
+  test:
+    name: Test Storybook
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Install Playwright browsers needed by the test-runner
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Download Storybook build
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-static
+          path: storybook-static
+
+      # Serve the static build and run tests against it
+      - name: Run Storybook tests
+        run: |
+          npx concurrently -k -s first -n "SB,TEST" \
+            "npx http-server storybook-static -p 6006 --silent" \
+            "npx wait-on http://127.0.0.1:6006 && npm run storybook:test -- --url http://127.0.0.1:6006"
+
+  # ─────────────────────────────────────────
+  # 3. Chromatic visual regression
+  # ─────────────────────────────────────────
+  chromatic:
+    name: Chromatic
+    runs-on: ubuntu-latest
+    needs: build
+    # Only run on PRs and pushes to main; skip for forks (no secret access)
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Chromatic needs full git history to detect changed stories
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download Storybook build
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-static
+          path: storybook-static
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@v11
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Re-use the already-built Storybook instead of rebuilding
+          storybookBuildDir: storybook-static
+          # Don't fail the PR if the token is missing (e.g. external contributor forks)
+          exitOnceUploaded: true
