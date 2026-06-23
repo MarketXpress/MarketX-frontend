@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ShoppingCart, Heart, User, Store } from "lucide-react";
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import CartDrawer, { getCartCount, subscribeToCart } from "./CartDrawer";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -12,8 +13,18 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [query, setQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const accountMenuRef = useRef<HTMLDivElement>(null);
+
+  // Keep cart badge in sync
+  useEffect(() => {
+    setCartCount(getCartCount());
+    return subscribeToCart(() => setCartCount(getCartCount()));
+  }, []);
+
+  const closeCart = useCallback(() => setCartOpen(false), []);
 
   const closeAccountMenu = (restoreFocus = true) => {
     setAccountOpen(false);
@@ -134,10 +145,18 @@ export default function Navbar() {
           <Heart className="w-5 h-5" />
         </Link>
 
-        <Link href="/dashboard/orders" className="relative p-2 text-gray-500 hover:text-emerald-600 transition-colors">
+        <button
+          onClick={() => setCartOpen(true)}
+          className="relative p-2 text-gray-500 hover:text-emerald-600 transition-colors"
+          aria-label={`Shopping cart, ${cartCount} items`}
+        >
           <ShoppingCart className="w-5 h-5" />
-          <span className="absolute top-1 right-1 w-4 h-4 bg-emerald-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
-        </Link>
+          {cartCount > 0 && (
+            <span className="absolute top-1 right-1 min-w-[16px] h-4 bg-emerald-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-[3px]">
+              {cartCount}
+            </span>
+          )}
+        </button>
 
         {user ? (
           <div className="relative">
@@ -182,6 +201,9 @@ export default function Navbar() {
           </Link>
         )}
       </div>
+
+      {/* Cart drawer */}
+      <CartDrawer isOpen={cartOpen} onClose={closeCart} />
     </header>
   );
 }
