@@ -5,18 +5,53 @@ import Link from "next/link";
 import ProductCard from "@/components/marketplace/ProductCard";
 import { mockProducts } from "@/lib/mockData";
 
-function useCountdown(targetSeconds: number) {
-  const [seconds, setSeconds] = useState(targetSeconds);
+const STORAGE_KEY = "marketx_flash_sale_target";
+
+function getPersistedTarget(): number | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw === null) return null;
+    const ts = Number(raw);
+    if (!Number.isFinite(ts)) return null;
+    if (ts <= Date.now()) return null;
+    return ts;
+  } catch {
+    return null;
+  }
+}
+
+function persistTarget(ts: number): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, String(ts));
+  } catch {
+    /* localStorage unavailable */
+  }
+}
+
+function useCountdown(durationSeconds: number) {
+  const [targetTimestamp] = useState<number>(() => {
+    const persisted = getPersistedTarget();
+    if (persisted !== null) return persisted;
+    const ts = Date.now() + durationSeconds * 1000;
+    persistTarget(ts);
+    return ts;
+  });
+
+  const [remainingMs, setRemainingMs] = useState(() =>
+    Math.max(0, targetTimestamp - Date.now())
+  );
+
   useEffect(() => {
-    const t = setInterval(
-      () => setSeconds((s) => (s > 0 ? s - 1 : targetSeconds)),
-      1000
-    );
+    const t = setInterval(() => {
+      setRemainingMs(Math.max(0, targetTimestamp - Date.now()));
+    }, 1000);
     return () => clearInterval(t);
-  }, [targetSeconds]);
-  const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
-  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
-  const s = String(seconds % 60).padStart(2, "0");
+  }, [targetTimestamp]);
+
+  const totalSeconds = Math.ceil(remainingMs / 1000);
+  const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+  const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+  const s = String(totalSeconds % 60).padStart(2, "0");
   return { h, m, s };
 }
 
