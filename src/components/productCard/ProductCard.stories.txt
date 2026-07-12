@@ -1,0 +1,138 @@
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import { fn } from "@storybook/test";
+import React from "react";
+import { ProductCard } from "./ProductCard";
+
+const meta = {
+  title: "Components/ProductCard",
+  component: ProductCard,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "padded",
+    docs: {
+      description: {
+        component:
+          "A versatile product card used in listing pages, carousels, and featured sections. Supports three display variants: **default**, **featured**, and **compact**.",
+      },
+    },
+  },
+  args: {
+    onAddToCart: fn(),
+    onClick: fn(),
+  },
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["default", "featured", "compact"],
+      description: "Visual variant of the card",
+    },
+    priceInCents: {
+      control: { type: "number", min: 0, step: 100 },
+      description: "Price in cents (e.g. 2999 = $29.99)",
+    },
+    inStock: { control: "boolean" },
+    badge: { control: "text" },
+  },
+} satisfies Meta<typeof ProductCard>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    name: "Ergonomic Mesh Chair",
+    description: "Lumbar support, adjustable armrests, breathable mesh back for all-day comfort.",
+    priceInCents: 34999,
+    inStock: true,
+  },
+};
+
+export const Featured: Story = {
+  args: {
+    name: "Standing Desk Pro",
+    description: "Electric sit-stand desk with memory presets and cable management.",
+    priceInCents: 89900,
+    variant: "featured",
+    badge: "Best seller",
+  },
+};
+
+export const Compact: Story = {
+  args: {
+    name: "USB-C Hub 7-in-1",
+    priceInCents: 4999,
+    variant: "compact",
+    inStock: true,
+  },
+};
+
+export const OutOfStock: Story = {
+  args: {
+    name: "Ergonomic Mesh Chair",
+    description: "Lumbar support, adjustable armrests, breathable mesh back for all-day comfort.",
+    priceInCents: 34999,
+    inStock: false,
+  },
+};
+
+export const WithBadge: Story = {
+  args: {
+    name: "Ergonomic Mesh Chair",
+    description: "Lumbar support, adjustable armrests, breathable mesh back for all-day comfort.",
+    priceInCents: 34999,
+    badge: "New",
+    inStock: true,
+  },
+};
+
+export const NoImage: Story = {
+  args: {
+    name: "Product Without Image",
+    priceInCents: 1999,
+    description: "Renders the placeholder icon when no imageUrl is provided.",
+    inStock: true,
+  },
+};
+
+export const WithImage: Story = {
+  args: {
+    name: "Ergonomic Mesh Chair",
+    description: "Lumbar support, adjustable armrests, breathable mesh back.",
+    priceInCents: 34999,
+    imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=640&q=80",
+    imageAlt: "Modern office chair",
+    inStock: true,
+  },
+};
+
+export const CardGrid: Story = {
+  name: "Card Grid (3-up)",
+  render: (args) => (
+    <div className="grid gap-4 sm:grid-cols-3">
+      <ProductCard
+        name="Wireless Keyboard"
+        priceInCents={7999}
+        description="Compact TKL layout, 2.4 GHz wireless."
+        inStock={true}
+        onAddToCart={args.onAddToCart}
+      />
+      <ProductCard
+        name="Mechanical Keyboard Pro"
+        priceInCents={15999}
+        description="Hot-swap switches, per-key RGB, aluminium frame."
+        badge="New"
+        inStock={true}
+        variant="featured"
+        onAddToCart={args.onAddToCart}
+      />
+      <ProductCard
+        name="Wrist Rest"
+        priceInCents={2499}
+        inStock={false}
+        variant="compact"
+        onAddToCart={args.onAddToCart}
+      />
+    </div>
+  ),
+  parameters: { controls: { disable: true } },
+};
