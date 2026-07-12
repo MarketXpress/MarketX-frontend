@@ -14,7 +14,7 @@ MarketX is a state-of-the-art decentralized marketplace built on the **Stellar N
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Next.js 15 (App Router)](https://nextjs.org/)
+- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
 - **Runtime**: [React 19](https://react.dev/)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **Animations**: [Framer Motion](https://www.framer.com/motion/)
@@ -27,6 +27,10 @@ MarketX is a state-of-the-art decentralized marketplace built on the **Stellar N
 ### Prerequisites
 
 - [Node.js 20+](https://nodejs.org/)
+- **pnpm** — this project uses pnpm, not npm or yarn (see `pnpm-lock.yaml` and the `packageManager` field in `package.json`). Enable it via Corepack, which ships with Node 20+:
+  ```bash
+  corepack enable
+  ```
 - [Stellar Freighter Wallet](https://www.freighter.app/) extension installed in your browser.
 
 ### Installation
@@ -39,18 +43,20 @@ MarketX is a state-of-the-art decentralized marketplace built on the **Stellar N
 
 2. **Install dependencies**:
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Run the development server**:
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 4. **Build for production**:
    ```bash
-   npm run build
+   pnpm build
    ```
+
+> ⚠️ Don't use `npm install` or `yarn install` here — it will generate a second lockfile that drifts out of sync with `pnpm-lock.yaml` and breaks deployment. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full contributor workflow.
 
 ## 📂 Project Structure
 
@@ -64,12 +70,7 @@ MarketX is a state-of-the-art decentralized marketplace built on the **Stellar N
 
 ## 🤝 Contributing
 
-This is an open-source project and we welcome contributions! Whether it's fixing a bug, adding a feature, or improving documentation, feel free to open a Pull Request.
-
-1. Create a new branch: `git checkout -b feat/your-feature-name`
-2. Commit your changes: `git commit -m "feat: your feature description"`
-3. Push to the branch: `git push origin feat/your-feature-name`
-4. Open a Pull Request.
+This is an open-source project and we welcome contributions! See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for the full setup, workflow, and PR process — start there before opening a Pull Request.
 
 ## ⚖️ License
 

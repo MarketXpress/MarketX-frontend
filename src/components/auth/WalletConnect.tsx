@@ -23,8 +23,6 @@ export default function WalletConnect() {
   };
 
   useEffect(() => {
-    // Checks the Freighter browser extension - an external system only reachable post-mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     checkConnection();
   }, []);
 
