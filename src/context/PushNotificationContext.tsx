@@ -73,6 +73,8 @@ export function PushNotificationProvider({
   }, []);
 
   useEffect(() => {
+    // Reads browser-only APIs (Notification, localStorage) - can't run during SSR render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     syncState();
   }, [syncState]);
 

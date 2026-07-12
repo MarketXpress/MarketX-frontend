@@ -14,13 +14,12 @@ export default function Navbar() {
   const [query, setQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  const [cartCount, setCartCount] = useState(() => getCartCount());
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const accountMenuRef = useRef<HTMLDivElement>(null);
 
-  // Keep cart badge in sync
+  // Keep cart badge in sync with future cart changes
   useEffect(() => {
-    setCartCount(getCartCount());
     return subscribeToCart(() => setCartCount(getCartCount()));
   }, []);
 

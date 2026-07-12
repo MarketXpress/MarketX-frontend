@@ -3,17 +3,13 @@
 import { useState, useEffect } from "react";
 import { isConnected, getAddress } from "@stellar/freighter-api";
 import { Wallet, LogOut, CheckCircle2, Loader2 } from "lucide-react";
-import { cn, formatAddress } from "@/lib/utils";
+import { formatAddress } from "@/lib/utils";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 
 export default function WalletConnect() {
   const [address, setAddress] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
-
-  useEffect(() => {
-    checkConnection();
-  }, []);
 
   const checkConnection = async () => {
     try {
@@ -25,6 +21,12 @@ export default function WalletConnect() {
       console.error("Freighter check failed", e);
     }
   };
+
+  useEffect(() => {
+    // Checks the Freighter browser extension - an external system only reachable post-mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    checkConnection();
+  }, []);
 
   const connect = async () => {
     setLoading(true);

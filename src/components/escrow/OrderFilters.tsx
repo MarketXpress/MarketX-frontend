@@ -7,7 +7,6 @@ import {
   FilterCategory,
   FilterState,
 } from "@/lib/orderFilters";
-import { cn } from "@/lib/utils";
 
 interface OrderFiltersProps {
   filters: OrderFilters;
