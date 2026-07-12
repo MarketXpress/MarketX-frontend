@@ -87,7 +87,7 @@ export default function MultiStepForm() {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
-  const onSubmit = async (_data: ListingFormData) => {
+  const onSubmit = async () => {
     setShowDeployConfirm(true);
   };
 
