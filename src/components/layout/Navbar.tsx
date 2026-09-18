@@ -122,15 +122,14 @@ export default function Navbar() {
 
       {/* Right icons */}
       <div className="flex items-center gap-1 shrink-0">
-        {!user && (
-          <Link
-            href="/auth/register"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-accent hover:bg-accent-hover text-on-accent text-xs font-semibold rounded-md transition-colors"
-          >
-            <Store className="w-3.5 h-3.5" />
-            Sell on MX
-          </Link>
-        )}
+        <Link
+          href={user ? "/dashboard/selling/new" : "/auth/register"}
+          className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-xs font-semibold text-on-accent transition-colors hover:bg-accent-hover"
+        >
+          <Store className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="hidden sm:inline">{user ? "Sell an item" : "Sell on MX"}</span>
+          <span className="sm:hidden">Sell</span>
+        </Link>
 
         <ThemeToggle />
 
@@ -173,7 +172,8 @@ export default function Navbar() {
                   <p className="text-[10px] text-ink-faint capitalize">{user.role.toLowerCase()}</p>
                 </div>
                 <Link href="/dashboard/orders" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">My Orders</Link>
-                <Link href="/dashboard/selling" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Selling Dashboard</Link>
+                <Link href="/dashboard/selling" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">My Listings</Link>
+                <Link href="/dashboard/selling/new" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">List an Item</Link>
                 <Link href="/dashboard/wallet" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Wallet</Link>
                 <Link href="/profile" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Profile</Link>
                 <button role="menuitem" tabIndex={-1} onClick={() => { void signOut(); setAccountOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-bad hover:bg-bad-bg focus:bg-bad-bg focus:outline-none">Sign Out</button>
@@ -187,7 +187,6 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Cart drawer */}
     </header>
   );
 }
