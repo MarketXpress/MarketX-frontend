@@ -301,8 +301,13 @@ export default function ProductDetailView({
                     )}
                   </div>
                 </div>
-                <button className="shrink-0 text-[11px] font-semibold text-accent bg-accent-soft border border-accent-line px-3 py-1.5 rounded-lg hover:bg-accent-hover hover:text-on-accent hover:border-accent transition-colors">
-                  Contact
+                <button
+                  type="button"
+                  disabled
+                  title="Messaging between buyers and sellers is not built yet"
+                  className="shrink-0 cursor-not-allowed rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-[11px] font-semibold text-ink-faint"
+                >
+                  Contact — soon
                 </button>
               </div>
             </div>
