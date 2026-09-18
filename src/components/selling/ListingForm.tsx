@@ -164,18 +164,9 @@ export default function ListingForm() {
   const needsPayoutAddress = !payoutAddress;
   const usdPrice = Number.isFinite(watched.usdPrice) ? watched.usdPrice : 0;
 
-  if (isLoadingContext) {
-    return (
-      <div className="flex items-center justify-center rounded-lg border border-line bg-surface py-20 text-sm text-ink-muted">
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-        Loading…
-      </div>
-    );
-  }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="space-y-6">
+      <fieldset disabled={isLoadingContext || isSubmitting} className="space-y-6 border-0 p-0 m-0 min-w-0">
         {/* ---------------------------------------------------------------- */}
         <Section title="What are you selling?">
           <Field label="Item name" error={errors.name?.message} htmlFor="name">
@@ -347,7 +338,7 @@ export default function ListingForm() {
             {submitError}
           </div>
         )}
-      </div>
+      </fieldset>
 
       {/* ------------------------------------------------------------------ */}
       {/* Preview. A seller is writing for a grid they cannot see while they  */}
@@ -366,7 +357,7 @@ export default function ListingForm() {
 
         <button
           type="submit"
-          disabled={isSubmitting || needsPayoutAddress}
+          disabled={isLoadingContext || isSubmitting || needsPayoutAddress}
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}

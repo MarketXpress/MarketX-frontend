@@ -118,9 +118,40 @@ export default function SellerListings() {
 
   if (isAuthLoading || isLoading) {
     return (
-      <div className="flex items-center justify-center rounded-lg border border-line bg-surface py-20 text-sm text-ink-muted">
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-        Loading your listings…
+      <div className="space-y-4" aria-label="Loading your listings" role="status">
+        <dl className="mb-4 grid grid-cols-3 gap-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-lg border border-line bg-surface px-3 py-2.5">
+              <div className="h-3 w-12 rounded bg-surface-2 animate-pulse" />
+              <div className="mt-1.5 h-6 w-16 rounded bg-surface-2 animate-pulse" />
+            </div>
+          ))}
+        </dl>
+        <ul className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <li
+              key={i}
+              className="flex items-center gap-4 rounded-lg border border-line bg-surface p-3"
+            >
+              <div className="h-16 w-16 shrink-0 rounded-md bg-surface-2 animate-pulse" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-12 rounded bg-surface-2 animate-pulse" />
+                  <div className="h-3 w-20 rounded bg-surface-2 animate-pulse" />
+                </div>
+                <div className="h-4 w-3/4 rounded bg-surface-2 animate-pulse" />
+                <div className="flex items-center gap-3">
+                  <div className="h-3 w-16 rounded bg-surface-2 animate-pulse" />
+                  <div className="h-3 w-12 rounded bg-surface-2 animate-pulse" />
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <div className="h-8 w-8 rounded-md bg-surface-2 animate-pulse" />
+                <div className="h-8 w-8 rounded-md bg-surface-2 animate-pulse" />
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
