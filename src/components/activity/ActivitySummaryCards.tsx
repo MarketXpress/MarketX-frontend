@@ -44,18 +44,18 @@ export default function ActivitySummaryCards() {
         return (
           <div
             key={card.label}
-            className="rounded-2xl border border-gray-200 bg-white p-5"
+            className="rounded-2xl border border-line bg-surface p-5"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400">
+                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-ink-faint">
                   {card.label}
                 </p>
-                <p className="mt-3 text-3xl font-black text-gray-900">
+                <p className="mt-3 text-3xl font-black text-ink">
                   {totals[card.valueKey]}
                 </p>
               </div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-600">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-accent-line bg-accent-soft text-accent">
                 <Icon className="h-5 w-5" />
               </div>
             </div>

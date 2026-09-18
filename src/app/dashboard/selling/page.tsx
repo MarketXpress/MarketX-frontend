@@ -1,28 +1,39 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { PackagePlus } from "lucide-react";
 import DashboardSubnav from "@/components/dashboard/DashboardSubnav";
-import StatCard from "@/components/dashboard/StatCard";
-import MultiStepForm from "@/components/selling/MultiStepForm";
+import SellerListings from "@/components/selling/SellerListings";
+
+export const metadata: Metadata = {
+  title: "Your listings",
+  description: "Manage the items you have for sale on MarketXpress.",
+};
 
 export default function SellingDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-bg">
       <div className="pt-14">
         <DashboardSubnav title="My Account" />
 
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-            <StatCard label="Active Listings" value="3" />
-            <StatCard label="Total Sales" value="$2,840" accent />
-            <StatCard label="Pending Payout" value="$420" />
-            <StatCard label="Seller Rating" value="4.8 ★" />
+        <div className="mx-auto max-w-4xl px-4 py-6">
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <h1 className="text-xl font-bold text-ink">Your listings</h1>
+              <p className="mt-0.5 text-sm text-ink-muted">
+                Everything you have for sale, including drafts.
+              </p>
+            </div>
+
+            <Link
+              href="/dashboard/selling/new"
+              className="inline-flex shrink-0 items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-semibold text-on-accent transition-colors hover:bg-accent-hover"
+            >
+              <PackagePlus className="h-4 w-4" aria-hidden="true" />
+              List an item
+            </Link>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h2 className="text-base font-black text-gray-900 mb-1">List a New Item</h2>
-            <p className="text-xs text-gray-500 mb-6">
-              Configure your item details, escrow terms, and pricing.
-            </p>
-            <MultiStepForm />
-          </div>
+          <SellerListings />
         </div>
       </div>
     </div>

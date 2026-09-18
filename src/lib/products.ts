@@ -20,6 +20,8 @@ export interface Product {
   reviewCount: number;
   category: string;
   seller: string;
+  /** The seller's profile id, for linking to their storefront. */
+  sellerId: string;
   badge?: 'flash' | 'new' | 'hot';
   description?: string;
   images?: string[];
@@ -35,7 +37,7 @@ export interface Product {
  */
 const PRODUCT_COLUMNS = `
   id, name, description, usd_price, original_usd_price, xlm_price,
-  discount_percent, badge, rating, review_count,
+  discount_percent, badge, rating, review_count, seller_id,
   categories:category_id ( name ),
   profiles:seller_id ( display_name, seller_rating, seller_sales ),
   product_images ( url, position )
@@ -52,6 +54,7 @@ interface ProductRow {
   badge: 'flash' | 'new' | 'hot' | null;
   rating: string | number | null;
   review_count: number | null;
+  seller_id: string;
   categories: { name: string } | null;
   profiles: { display_name: string | null; seller_rating: string | number | null; seller_sales: number | null } | null;
   product_images: { url: string; position: number }[] | null;
@@ -86,6 +89,7 @@ function mapProduct(row: ProductRow): Product {
     reviewCount: row.review_count ?? 0,
     category: row.categories?.name ?? 'Uncategorized',
     seller: row.profiles?.display_name ?? 'Unknown seller',
+    sellerId: row.seller_id,
     badge: row.badge ?? undefined,
     description: row.description ?? undefined,
     images: [...(row.product_images ?? [])]

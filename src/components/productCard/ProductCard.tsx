@@ -47,7 +47,7 @@ export function ProductCard({
     <article
       onClick={onClick}
       className={[
-        "group relative flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm",
+        "group relative flex flex-col rounded-2xl border border-slate-200 bg-surface shadow-sm",
         "transition-shadow duration-200 hover:shadow-md",
         isFeatured ? "ring-2 ring-indigo-500" : "",
         onClick ? "cursor-pointer" : "",
@@ -103,7 +103,7 @@ export function ProductCard({
           </span>
         )}
         {!inStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <div className="absolute inset-0 flex items-center justify-center bg-surface/70 backdrop-blur-sm">
             <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-semibold text-white">
               Out of stock
             </span>

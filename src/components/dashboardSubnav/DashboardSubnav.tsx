@@ -31,7 +31,7 @@ export function DashboardSubnav({
   return (
     <nav
       className={[
-        "flex items-center gap-0 border-b border-slate-200 bg-white",
+        "flex items-center gap-0 border-b border-slate-200 bg-surface",
         className,
       ]
         .filter(Boolean)

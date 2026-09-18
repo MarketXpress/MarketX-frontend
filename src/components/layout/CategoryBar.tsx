@@ -27,19 +27,19 @@ export default function CategoryBar() {
     return null;
 
   return (
-    <nav className="fixed top-14 left-0 right-0 z-40 h-10 bg-emerald-600 flex items-center px-4 overflow-x-auto scrollbar-none">
+    <nav className="fixed top-14 left-0 right-0 z-40 h-10 bg-accent flex items-center px-4 overflow-x-auto scrollbar-none">
       <div className="flex items-center gap-0 min-w-max">
         <Link
           href="/marketplace"
           className={`px-3 py-1 text-xs font-semibold whitespace-nowrap transition-colors rounded-sm ${
             pathname === "/marketplace"
               ? "text-white font-bold bg-black/20"
-              : "text-emerald-100 hover:text-white hover:bg-black/10"
+              : "text-on-accent/70 hover:text-on-accent hover:bg-black/10"
           }`}
         >
           Marketplace
         </Link>
-        <span className="text-emerald-400 text-xs px-1">|</span>
+        <span className="text-accent text-xs px-1">|</span>
         {CATEGORIES.map((cat) => (
           <Link
             key={cat.value || "all"}
@@ -47,7 +47,7 @@ export default function CategoryBar() {
             className={`px-3 py-1 text-xs font-semibold whitespace-nowrap transition-colors rounded-sm ${
               currentCategory === cat.value && pathname !== "/marketplace"
                 ? "text-white font-bold bg-black/20"
-                : "text-emerald-100 hover:text-white hover:bg-black/10"
+                : "text-on-accent/70 hover:text-on-accent hover:bg-black/10"
             }`}
           >
             {cat.label}

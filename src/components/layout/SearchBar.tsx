@@ -33,7 +33,7 @@ export default function SearchBar() {
 
 
   return (
-    <div className="hidden sm:flex items-center bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-blue-500/50 transition-all">
+    <div className="hidden sm:flex items-center bg-surface/5 border border-white/10 rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-blue-500/50 transition-all">
       <Search className="w-4 h-4 text-neutral-500" />
       <input
         type="text"

@@ -29,7 +29,7 @@ export default function OrderFiltersComponent({
           onChange={(e) =>
             onFiltersChange({ ...filters, searchQuery: e.target.value })
           }
-          className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          className="w-full pl-12 pr-4 py-3 bg-surface/5 border border-white/10 rounded-2xl text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
         />
       </div>
 
@@ -49,7 +49,7 @@ export default function OrderFiltersComponent({
               category: e.target.value as FilterCategory,
             })
           }
-          className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+          className="px-4 py-2 bg-surface/5 border border-white/10 rounded-xl text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
         >
           <option value="all">All Categories</option>
           <option value="Digital">Digital</option>
@@ -66,7 +66,7 @@ export default function OrderFiltersComponent({
               state: e.target.value as FilterState,
             })
           }
-          className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+          className="px-4 py-2 bg-surface/5 border border-white/10 rounded-xl text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
         >
           <option value="all">All States</option>
           <option value="funded">Funded</option>
@@ -85,7 +85,7 @@ export default function OrderFiltersComponent({
               sortBy: e.target.value as SortOption,
             })
           }
-          className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+          className="px-4 py-2 bg-surface/5 border border-white/10 rounded-xl text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
         >
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>

@@ -22,7 +22,7 @@ export default function EventLog({ events }: EventLogProps) {
     switch (actor) {
       case "buyer": return "text-cyan-400 bg-cyan-500/10 border-cyan-500/20";
       case "seller": return "text-purple-400 bg-purple-500/10 border-purple-500/20";
-      case "system": return "text-neutral-400 bg-white/5 border-white/10";
+      case "system": return "text-neutral-400 bg-surface/5 border-white/10";
     }
   };
 

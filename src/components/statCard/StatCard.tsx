@@ -34,7 +34,7 @@ function TrendArrow({ trend }: { trend: StatTrend }) {
 }
 
 const trendColors: Record<StatTrend, string> = {
-  up: "text-emerald-600",
+  up: "text-accent",
   down: "text-rose-500",
   neutral: "text-slate-500",
 };
@@ -61,7 +61,7 @@ export function StatCard({
           ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
           : isMinimal
           ? "border-b border-slate-200 pb-4"
-          : "border border-slate-200 bg-white shadow-sm",
+          : "border border-slate-200 bg-surface shadow-sm",
         className,
       ]
         .filter(Boolean)
@@ -81,7 +81,7 @@ export function StatCard({
           <span
             className={[
               "flex h-8 w-8 items-center justify-center rounded-xl text-sm",
-              isHighlight ? "bg-white/20 text-white" : "bg-indigo-50 text-indigo-600",
+              isHighlight ? "bg-surface/20 text-white" : "bg-indigo-50 text-indigo-600",
             ].join(" ")}
           >
             {icon}

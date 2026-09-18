@@ -7,10 +7,10 @@ import { formatSubscriptionEndpoint } from "@/lib/pushNotifications";
 import { usePushNotifications } from "@/context/PushNotificationContext";
 
 function statusTone(status: string) {
-  if (status === "Enabled") return "text-emerald-700 bg-emerald-50 border-emerald-200";
+  if (status === "Enabled") return "text-accent bg-accent-soft border-accent-line";
   if (status === "Ready") return "text-blue-700 bg-blue-50 border-blue-200";
-  if (status === "Disabled") return "text-gray-500 bg-gray-100 border-gray-200";
-  return "text-amber-700 bg-amber-50 border-amber-200";
+  if (status === "Disabled") return "text-ink-faint bg-surface-2 border-line";
+  return "text-warn bg-warn-bg border-warn-line";
 }
 
 export default function NotificationPreferencesCard() {
@@ -88,15 +88,15 @@ export default function NotificationPreferencesCard() {
   };
 
   return (
-    <div className="p-6 bg-white border border-gray-200 rounded-2xl space-y-5">
+    <div className="p-6 bg-surface border border-line rounded-2xl space-y-5">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.25em] text-emerald-700">
+          <div className="inline-flex items-center gap-2 rounded-full border border-accent-line bg-accent-soft px-3 py-1 text-xs font-bold uppercase tracking-[0.25em] text-accent">
             <Bell className="h-3.5 w-3.5" />
             Notifications
           </div>
-          <h2 className="text-base font-black text-gray-900">Push Notifications</h2>
-          <p className="max-w-2xl text-sm text-gray-500">
+          <h2 className="text-base font-black text-ink">Push Notifications</h2>
+          <p className="max-w-2xl text-sm text-ink-faint">
             Get browser alerts for new orders, escrow milestones, dispute updates, and seller messages.
           </p>
         </div>
@@ -108,31 +108,31 @@ export default function NotificationPreferencesCard() {
       </div>
 
       <div className="grid gap-3 md:grid-cols-3">
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Permission</p>
-          <p className="mt-1.5 text-sm font-semibold text-gray-900">{permission === "unsupported" ? "Unavailable" : permission}</p>
+        <div className="rounded-xl border border-line bg-surface-2 p-3.5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">Permission</p>
+          <p className="mt-1.5 text-sm font-semibold text-ink">{permission === "unsupported" ? "Unavailable" : permission}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Service Worker</p>
-          <p className="mt-1.5 text-sm font-semibold text-gray-900">{registrationReady ? "Registered" : "Not ready yet"}</p>
+        <div className="rounded-xl border border-line bg-surface-2 p-3.5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">Service Worker</p>
+          <p className="mt-1.5 text-sm font-semibold text-ink">{registrationReady ? "Registered" : "Not ready yet"}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Push Server</p>
-          <p className="mt-1.5 text-sm font-semibold text-gray-900">{configured ? "Configured" : "Local alerts only"}</p>
+        <div className="rounded-xl border border-line bg-surface-2 p-3.5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">Push Server</p>
+          <p className="mt-1.5 text-sm font-semibold text-ink">{configured ? "Configured" : "Local alerts only"}</p>
         </div>
       </div>
 
       {subscription ? (
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Subscription</p>
-          <p className="mt-1.5 break-all text-sm text-gray-600">{formatSubscriptionEndpoint(subscription)}</p>
+        <div className="rounded-xl border border-line bg-surface-2 p-3.5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">Subscription</p>
+          <p className="mt-1.5 break-all text-sm text-ink-muted">{formatSubscriptionEndpoint(subscription)}</p>
         </div>
       ) : null}
 
       {lastAction ? (
-        <p className="text-sm text-gray-500">{lastAction}</p>
+        <p className="text-sm text-ink-faint">{lastAction}</p>
       ) : (
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-ink-faint">
           {configured
             ? "Once the notification endpoint is wired to a backend, this device will receive live push messages."
             : "You can still enable local browser notifications now, and connect a push server later with NEXT_PUBLIC_VAPID_PUBLIC_KEY."}
@@ -144,7 +144,7 @@ export default function NotificationPreferencesCard() {
           <button
             onClick={handleEnable}
             disabled={isBusy || permission === "denied" || !supported}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-on-accent transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bell className="h-4 w-4" />}
             Enable Notifications
@@ -153,7 +153,7 @@ export default function NotificationPreferencesCard() {
           <button
             onClick={handleDisable}
             disabled={isBusy}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-2 px-5 py-2.5 text-sm font-bold text-ink-muted transition-colors hover:bg-surface-3 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Slash className="h-4 w-4" />}
             Disable Notifications
@@ -163,7 +163,7 @@ export default function NotificationPreferencesCard() {
         <button
           onClick={handleTest}
           disabled={isBusy || permission !== "granted"}
-          className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-surface px-5 py-2.5 text-sm font-bold text-ink-muted transition-colors hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Send className="h-4 w-4" />
           Send Test Alert

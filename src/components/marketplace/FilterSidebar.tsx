@@ -123,11 +123,11 @@ export default function FilterSidebar({
                   "w-5 h-5 rounded-md border flex items-center justify-center transition-colors",
                   types.includes(type)
                     ? "bg-blue-600 border-blue-600"
-                    : "bg-white/5 border-white/10 group-hover:border-blue-500/50",
+                    : "bg-surface/5 border-white/10 group-hover:border-blue-500/50",
                 )}
               >
                 {types.includes(type) && (
-                  <span className="w-2.5 h-2.5 bg-white rounded-sm" />
+                  <span className="w-2.5 h-2.5 bg-surface rounded-sm" />
                 )}
               </div>
               <span className="text-sm text-neutral-400 group-hover:text-white transition-colors">
@@ -138,14 +138,14 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      <div className="h-px bg-white/5 w-full" />
+      <div className="h-px bg-surface/5 w-full" />
 
       <div className="space-y-4">
         <h4 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">
           Price Range
         </h4>
 
-        <div className="flex gap-2 bg-white/5 p-1 rounded-xl">
+        <div className="flex gap-2 bg-surface/5 p-1 rounded-xl">
           {["All", "XLM", "USDC"].map((value) => (
             <button
               key={value}
@@ -157,7 +157,7 @@ export default function FilterSidebar({
               className={cn(
                 "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
                 currency === value
-                  ? "bg-white/10 text-white shadow-sm"
+                  ? "bg-surface/10 text-white shadow-sm"
                   : "text-neutral-500 hover:text-neutral-300",
               )}
             >
@@ -173,7 +173,7 @@ export default function FilterSidebar({
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
             onBlur={(e) => handlePriceChange(e, "minPrice", setMinPrice)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
+            className="w-full bg-surface/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
           />
           <span className="text-neutral-600">-</span>
           <input
@@ -182,12 +182,12 @@ export default function FilterSidebar({
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             onBlur={(e) => handlePriceChange(e, "maxPrice", setMaxPrice)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
+            className="w-full bg-surface/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
           />
         </div>
       </div>
 
-      <div className="h-px bg-white/5 w-full" />
+      <div className="h-px bg-surface/5 w-full" />
 
       <div className="space-y-3">
         <h4 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">
@@ -206,11 +206,11 @@ export default function FilterSidebar({
                   "w-5 h-5 rounded-md border flex items-center justify-center transition-colors",
                   status.includes(value)
                     ? "bg-blue-600 border-blue-600"
-                    : "bg-white/5 border-white/10 group-hover:border-blue-500/50",
+                    : "bg-surface/5 border-white/10 group-hover:border-blue-500/50",
                 )}
               >
                 {status.includes(value) && (
-                  <span className="w-2.5 h-2.5 bg-white rounded-sm" />
+                  <span className="w-2.5 h-2.5 bg-surface rounded-sm" />
                 )}
               </div>
               <span className="text-sm text-neutral-400 group-hover:text-white transition-colors">
@@ -221,7 +221,7 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      <div className="h-px bg-white/5 w-full" />
+      <div className="h-px bg-surface/5 w-full" />
 
       <div className="space-y-3">
         <h4 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">
@@ -268,7 +268,7 @@ export default function FilterSidebar({
     <>
       <aside
         className={cn(
-          "hidden lg:block w-72 shrink-0 self-start sticky top-32 p-6 rounded-3xl bg-white/5 border border-white/10",
+          "hidden lg:block w-72 shrink-0 self-start sticky top-32 p-6 rounded-3xl bg-surface/5 border border-white/10",
           className,
         )}
       >
@@ -284,7 +284,7 @@ export default function FilterSidebar({
           <div className="relative w-80 max-w-[80vw] h-full bg-[#0a0a0a] border-r border-white/10 p-6 overflow-y-auto animate-in slide-in-from-left duration-300 shadow-2xl">
             <button
               onClick={closeDrawer}
-              className="absolute top-6 right-6 p-2 text-neutral-400 hover:text-white bg-white/5 rounded-full transition-colors"
+              className="absolute top-6 right-6 p-2 text-neutral-400 hover:text-white bg-surface/5 rounded-full transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
