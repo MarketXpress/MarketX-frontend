@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authApi, ApiError } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 type FormErrors = {
   firstName?: string;
@@ -13,8 +13,28 @@ type FormErrors = {
   form?: string;
 };
 
+/** Turns a Supabase auth error into something a person can act on. */
+function signUpErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : "";
+
+  if (/already registered|already exists/i.test(message)) {
+    return "An account with this email already exists";
+  }
+  if (/password/i.test(message) && /short|least/i.test(message)) {
+    return "Password is too short — use at least 8 characters.";
+  }
+  if (/rate limit|too many/i.test(message)) {
+    return "Too many attempts. Wait a minute and try again.";
+  }
+  if (/failed to fetch|network/i.test(message)) {
+    return "Cannot reach the server. Check your connection and try again.";
+  }
+  return message || "Something went wrong. Please try again.";
+}
+
 export default function RegisterPage() {
   const router = useRouter();
+  const { signUp } = useAuth();
   const [role, setRole] = useState<"BUYER" | "SELLER">("BUYER");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -47,21 +67,10 @@ export default function RegisterPage() {
     if (Object.keys(errs).length > 0) return;
     setIsSubmitting(true);
     try {
-      await authApi.register({ email, password, firstName, lastName, role });
+      await signUp({ email, password, firstName, lastName, role });
       router.push(`/auth/login?email=${encodeURIComponent(email)}&registered=1`);
     } catch (err) {
-      let message: string;
-      if (err instanceof ApiError) {
-        message =
-          err.status === 409
-            ? "An account with this email already exists"
-            : err.message;
-      } else if (err instanceof TypeError && err.message.includes("fetch")) {
-        message = "Cannot reach the server. Make sure the backend is running.";
-      } else {
-        message = "Something went wrong. Please try again.";
-      }
-      setErrors({ form: message });
+      setErrors({ form: signUpErrorMessage(err) });
     } finally {
       setIsSubmitting(false);
     }

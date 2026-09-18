@@ -1,72 +1,148 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
-import { decodeJwtPayload } from "@/lib/api";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import type { Session } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/client";
 
 export interface AuthUser {
   id: string;
   email: string;
   role: "BUYER" | "SELLER" | "ADMIN";
+  displayName: string | null;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
+  session: Session | null;
+  /** Access token, for callers that still need to pass a bearer header. */
   token: string | null;
-  login: (accessToken: string, refreshToken: string) => void;
-  logout: () => void;
+  signUp: (input: SignUpInput) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
   isLoading: boolean;
+}
+
+export interface SignUpInput {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  role?: "BUYER" | "SELLER";
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function userFromToken(token: string): AuthUser | null {
-  try {
-    const payload = decodeJwtPayload(token);
-    const id = String(payload.sub ?? "");
-    const email = String(payload.email ?? "");
-    const role = (payload.role as AuthUser["role"]) ?? "BUYER";
-    if (!id || !email) return null;
-    return { id, email, role };
-  } catch {
-    return null;
-  }
+/**
+ * Builds the app's user from a Supabase session.
+ *
+ * The role comes from user metadata rather than the `profiles` table, so the
+ * header can render the right navigation without waiting on a second query.
+ * Metadata is client-writable, so it is a display convenience only —
+ * authorization is enforced by RLS against `profiles.role`, never by this.
+ */
+function userFromSession(session: Session | null): AuthUser | null {
+  if (!session?.user) return null;
+
+  const metadata = session.user.user_metadata ?? {};
+  const role = metadata.role;
+
+  return {
+    id: session.user.id,
+    email: session.user.email ?? "",
+    role: role === "SELLER" || role === "ADMIN" ? role : "BUYER",
+    displayName: metadata.display_name ?? null,
+  };
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("mx_token");
-  });
+  const supabase = createClient();
+  const [session, setSession] = useState<Session | null>(null);
 
-  const [user, setUser] = useState<AuthUser | null>(() => {
-    if (typeof window === "undefined") return null;
-    const saved = localStorage.getItem("mx_token");
-    if (!saved) return null;
-    return userFromToken(saved);
-  });
+  // Starts true: until the first session read resolves we genuinely do not
+  // know whether anyone is signed in, and rendering a signed-out header in the
+  // meantime makes an authenticated page flash its logged-out state.
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = useCallback((accessToken: string, refreshToken: string) => {
-    const decoded = userFromToken(accessToken);
-    setToken(accessToken);
-    setUser(decoded);
-    localStorage.setItem("mx_token", accessToken);
-    localStorage.setItem("mx_refresh_token", refreshToken);
-  }, []);
+  useEffect(() => {
+    let active = true;
 
-  const logout = useCallback(() => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem("mx_token");
-    localStorage.removeItem("mx_refresh_token");
-  }, []);
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      setSession(data.session);
+      setIsLoading(false);
+    });
 
-  return (
-    <AuthContext.Provider
-      value={{ user, token, login, logout, isLoading: false }}
-    >
-      {children}
-    </AuthContext.Provider>
+    // Keeps this tab in step with sign-ins, sign-outs and token refreshes,
+    // including ones that happened in another tab.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      setIsLoading(false);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  const signUp = useCallback(
+    async ({ email, password, firstName, lastName, role }: SignUpInput) => {
+      const displayName = [firstName, lastName].filter(Boolean).join(" ").trim();
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            display_name: displayName || email.split("@")[0],
+            first_name: firstName ?? null,
+            last_name: lastName ?? null,
+            role: role ?? "BUYER",
+          },
+        },
+      });
+
+      if (error) throw error;
+    },
+    [supabase],
   );
+
+  const signIn = useCallback(
+    async (email: string, password: string) => {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    },
+    [supabase],
+  );
+
+  const signOut = useCallback(async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  }, [supabase]);
+
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user: userFromSession(session),
+      session,
+      token: session?.access_token ?? null,
+      signUp,
+      signIn,
+      signOut,
+      isLoading,
+    }),
+    [session, signUp, signIn, signOut, isLoading],
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
