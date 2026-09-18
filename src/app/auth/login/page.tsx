@@ -35,6 +35,24 @@ function LoginForm() {
   const prefillEmail = searchParams.get("email") ?? "";
   const justRegistered = searchParams.get("registered") === "1";
 
+  /**
+   * Where to go after signing in.
+   *
+   * Set by the middleware when it turns an unauthenticated visitor away from a
+   * protected page, so they land where they were heading rather than on a
+   * generic dashboard.
+   *
+   * Only same-origin paths are honoured. Redirecting to whatever the query
+   * string says is an open redirect — an attacker sends
+   * `?returnUrl=https://evil.example` and the site itself delivers the user
+   * there, wearing our domain in the address bar on the way.
+   */
+  const rawReturnUrl = searchParams.get("returnUrl") ?? "";
+  const returnUrl =
+    rawReturnUrl.startsWith("/") && !rawReturnUrl.startsWith("//")
+      ? rawReturnUrl
+      : "/dashboard/orders";
+
   const [email, setEmail] = useState(prefillEmail);
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
@@ -61,7 +79,7 @@ function LoginForm() {
       // Refresh so server components re-render against the new session cookie
       // before the dashboard reads it.
       router.refresh();
-      router.push("/dashboard/orders");
+      router.push(returnUrl);
     } catch (err) {
       setErrors({ form: signInErrorMessage(err) });
     } finally {
