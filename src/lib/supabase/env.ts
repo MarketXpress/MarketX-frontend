@@ -8,10 +8,20 @@
  * other code that reaches the client.
  */
 
+/**
+ * `NEXT_PUBLIC_` values are inlined into the bundle at build time, so these
+ * have to be present wherever the build runs — not only on a developer's
+ * machine. A missing one fails the build rather than the request, which is the
+ * right moment to find out, provided the message says where to set it.
+ */
 function required(name: string, value: string | undefined): string {
   if (!value) {
     throw new Error(
-      `Missing ${name}. Copy it from the Supabase dashboard into .env.local.`,
+      `Missing ${name}.\n` +
+        `  Local:  add it to .env.local (see .env.example)\n` +
+        `  Vercel: Project Settings > Environment Variables, for Production, ` +
+        `Preview and Development\n` +
+        `  Both values are in the Supabase dashboard under Project Settings > API.`,
     );
   }
   return value;
