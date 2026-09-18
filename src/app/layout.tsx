@@ -1,12 +1,43 @@
-import type { Metadata } from "next";
-import { Sora } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Figtree, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const sora = Sora({
-  variable: "--font-sora",
+/**
+ * next/font fetches these at build time and serves them from our own origin,
+ * so there is no runtime request to Google. It subsets to the characters
+ * actually used and generates a size-adjusted fallback, so text does not
+ * reflow while the font loads.
+ */
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
+
+/** Prices, wallet addresses and transaction hashes — anything that must line
+ *  up in a column or be read character by character. */
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
+/**
+ * Applies the saved theme before first paint.
+ *
+ * Without this the page renders light and snaps to dark a frame later, which
+ * is a flash in the face of anyone browsing at night.
+ */
+const themeScript = `
+(function(){
+  try {
+    var t = localStorage.getItem('marketx-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -61,8 +92,12 @@ export const metadata: Metadata = {
   icons: { icon: "/icon.png", apple: "/icon.png" },
 };
 
-export const viewport = {
-  themeColor: "#059669",
+/** Tints the browser chrome to match the page ground in each theme. */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FBFBFD" },
+    { media: "(prefers-color-scheme: dark)", color: "#0C0D13" },
+  ],
 };
 
 import Navbar from "@/components/layout/Navbar";
@@ -75,8 +110,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={sora.variable}>
-      <body className="antialiased font-[family-name:var(--font-sora)]" suppressHydrationWarning>
+    <html lang="en" className={`${figtree.variable} ${jetbrains.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="antialiased" suppressHydrationWarning>
         <AppProviders>
           <a href="#main-content" className="skip-nav">Skip to main content</a>
           <Navbar />
