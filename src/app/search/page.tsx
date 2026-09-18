@@ -1,5 +1,6 @@
 import ProductCard from "@/components/marketplace/ProductCard";
-import { mockProducts } from "@/lib/mockData";
+import { createClient } from "@/lib/supabase/server";
+import { searchProducts } from "@/lib/products";
 
 export default async function SearchPage({
   searchParams,
@@ -14,25 +15,11 @@ export default async function SearchPage({
         ? resolvedParams.q[0]
         : "";
   const query = rawQuery.trim();
-  const searchTerms = query
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean);
 
-  const filteredProducts = searchTerms.length
-    ? mockProducts.filter((product) => {
-        const searchableText = [
-          product.name,
-          product.category,
-          product.seller,
-          product.description ?? "",
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        return searchTerms.every((term) => searchableText.includes(term));
-      })
-    : mockProducts;
+  // Filtering happens in the database rather than over a fetched array, so
+  // search does not depend on having downloaded the whole catalogue first.
+  const supabase = await createClient();
+  const filteredProducts = await searchProducts(supabase, query);
 
   const heading = query
     ? `${filteredProducts.length} results for '${query}'`

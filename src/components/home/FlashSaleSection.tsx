@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProductCard from "@/components/marketplace/ProductCard";
-import { mockProducts } from "@/lib/mockData";
+import type { Product } from "@/lib/products";
 
 const STORAGE_KEY = "marketx_flash_sale_target";
 
@@ -55,9 +55,11 @@ function useCountdown(durationSeconds: number) {
   return { h, m, s };
 }
 
-export default function FlashSaleSection() {
+export default function FlashSaleSection({ products }: { products: Product[] }) {
   const { h, m, s } = useCountdown(4 * 3600 + 23 * 60 + 11);
-  const flashProducts = mockProducts.filter((p) => p.badge === "flash").slice(0, 5);
+  // Fetched by the server page and passed down, so this stays a client
+  // component for the countdown without needing to query from the browser.
+  const flashProducts = products;
 
   return (
     <section>
