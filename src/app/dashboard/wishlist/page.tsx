@@ -24,11 +24,9 @@ export default function WishlistPage() {
   useEffect(() => {
     let active = true;
 
-    if (wishlistIds.length === 0) {
-      setWishlistItems([]);
-      return;
-    }
-
+    // No early return for an empty list: `getProductsByIds` already answers
+    // `[]` for one. Short-circuiting here would mean calling setState
+    // synchronously in the effect body, which triggers a cascading render.
     getProductsByIds(createClient(), wishlistIds)
       .then((products) => {
         if (active) setWishlistItems(products);
