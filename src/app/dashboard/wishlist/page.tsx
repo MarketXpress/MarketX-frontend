@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardSubnav from "@/components/dashboard/DashboardSubnav";
 import ProductCard from "@/components/marketplace/ProductCard";
-import { getWishlist } from "@/lib/wishlistStore";
+import { getWishlist, initWishlist } from "@/lib/wishlistStore";
 import { createClient } from "@/lib/supabase/client";
 import { getProductsByIds, type Product } from "@/lib/products";
 
@@ -12,6 +12,7 @@ export default function WishlistPage() {
   const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
 
   useEffect(() => {
+    void initWishlist();
     const reload = () => setWishlistIds(getWishlist());
     reload();
     window.addEventListener("wishlist-change", reload);
