@@ -392,7 +392,7 @@ export async function getSellerActiveListings(
 export const STELLAR_ADDRESS_PATTERN = /^G[A-Z2-7]{55}$/;
 
 export function isValidStellarAddress(address: string): boolean {
-  return STELLAR_ADDRESS_PATTERN.test(address.trim().toUpperCase());
+  return STELLAR_ADDRESS_PATTERN.test(address.trim());
 }
 
 export async function setPayoutAddress(
