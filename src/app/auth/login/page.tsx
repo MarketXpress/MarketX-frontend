@@ -88,53 +88,53 @@ function LoginForm() {
   };
 
   const fieldClass = (field: keyof FormErrors, isTouched: boolean) =>
-    `w-full border rounded-lg px-3 py-2.5 text-sm text-gray-900 bg-white placeholder:text-gray-400 outline-none focus:ring-2 transition-all ${
+    `w-full border rounded-lg px-3 py-2.5 text-sm text-ink bg-surface placeholder:text-ink-faint outline-none focus:ring-2 transition-all ${
       errors[field] && isTouched
         ? "border-red-300 focus:ring-red-100"
-        : "border-gray-200 focus:border-emerald-500 focus:ring-emerald-100"
+        : "border-line focus:border-accent"
     }`;
 
   return (
     <div className="min-h-screen flex">
       {/* Left panel */}
-      <div className="hidden lg:flex w-[42%] bg-gray-900 flex-col justify-between p-10">
+      <div className="hidden lg:flex w-[42%] bg-ink flex-col justify-between p-10">
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="w-2 h-2 rounded-full bg-accent" />
           <span className="text-sm font-black text-white">MarketXpress</span>
         </div>
         <div>
           <p className="text-3xl font-black text-white leading-tight tracking-tight mb-3">
             &ldquo;Trade anything.<br />Risk nothing.&rdquo;
           </p>
-          <p className="text-sm text-gray-400 leading-relaxed">
+          <p className="text-sm text-ink-faint leading-relaxed">
             Every transaction on MarketXpress is secured by Stellar smart contract escrow. Your payment only releases when you confirm delivery.
           </p>
         </div>
-        <p className="text-xs text-gray-600">&copy; 2026 MarketXpress</p>
+        <p className="text-xs text-ink-muted">&copy; 2026 MarketXpress</p>
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center bg-white p-6">
+      <div className="flex-1 flex items-center justify-center bg-surface p-6">
         <div className="w-full max-w-sm">
           <div className="mb-7">
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight mb-1">Welcome back</h1>
-            <p className="text-sm text-gray-500">Sign in to your MarketXpress account</p>
+            <h1 className="text-2xl font-black text-ink tracking-tight mb-1">Welcome back</h1>
+            <p className="text-sm text-ink-faint">Sign in to your MarketXpress account</p>
           </div>
 
           <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
             {justRegistered && (
-              <div className="px-3 py-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold">
+              <div className="px-3 py-2.5 rounded-lg bg-accent-soft border border-accent-line text-accent text-sm font-semibold">
                 Account created! Sign in to continue.
               </div>
             )}
             {errors.form && (
-              <div role="alert" className="px-3 py-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+              <div role="alert" className="px-3 py-2.5 rounded-lg bg-bad-bg border border-bad-line text-bad text-sm">
                 {errors.form}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-xs font-bold text-gray-700 mb-1.5">
+              <label htmlFor="email" className="block text-xs font-bold text-ink-muted mb-1.5">
                 Email Address
               </label>
               <input
@@ -149,16 +149,16 @@ function LoginForm() {
                 aria-invalid={!!errors.email}
               />
               {errors.email && touched.email && (
-                <p id="email-error" className="text-xs text-red-600 mt-1" role="alert">{errors.email}</p>
+                <p id="email-error" className="text-xs text-bad mt-1" role="alert">{errors.email}</p>
               )}
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="password" className="text-xs font-bold text-gray-700">
+                <label htmlFor="password" className="text-xs font-bold text-ink-muted">
                   Password
                 </label>
-                <Link href="#" className="text-xs text-emerald-600 hover:text-emerald-700">
+                <Link href="#" className="text-xs text-accent hover:text-accent-hover">
                   Forgot password?
                 </Link>
               </div>
@@ -174,7 +174,7 @@ function LoginForm() {
                 aria-invalid={!!errors.password}
               />
               {errors.password && touched.password && (
-                <p id="password-error" className="text-xs text-red-600 mt-1" role="alert">{errors.password}</p>
+                <p id="password-error" className="text-xs text-bad mt-1" role="alert">{errors.password}</p>
               )}
             </div>
 
@@ -182,15 +182,15 @@ function LoginForm() {
               <input
                 type="checkbox"
                 id="remember"
-                className="rounded border-gray-300 text-emerald-600"
+                className="rounded border-line-strong text-accent"
               />
-              <label htmlFor="remember" className="text-xs text-gray-500">Remember me</label>
+              <label htmlFor="remember" className="text-xs text-ink-faint">Remember me</label>
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+              className="w-full bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-on-accent font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
             >
               {isSubmitting ? (
                 <>
@@ -205,9 +205,9 @@ function LoginForm() {
 
           <div className="relative my-5">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100" />
+              <div className="w-full border-t border-line" />
             </div>
-            <span className="relative flex justify-center bg-white px-3 text-[11px] text-gray-400 uppercase tracking-widest">
+            <span className="relative flex justify-center bg-surface px-3 text-[11px] text-ink-faint uppercase tracking-widest">
               or continue with
             </span>
           </div>
@@ -217,16 +217,16 @@ function LoginForm() {
               <button
                 key={p}
                 type="button"
-                className="flex items-center justify-center gap-1.5 border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-center gap-1.5 border border-line rounded-lg py-2 text-xs font-semibold text-ink-muted hover:bg-surface-2 transition-colors"
               >
                 {p}
               </button>
             ))}
           </div>
 
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-ink-faint">
             Don&apos;t have an account?{" "}
-            <Link href="/auth/register" className="text-emerald-600 font-bold hover:text-emerald-700">
+            <Link href="/auth/register" className="text-accent font-bold hover:text-accent-hover">
               Create one free
             </Link>
           </p>

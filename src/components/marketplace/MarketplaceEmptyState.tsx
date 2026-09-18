@@ -13,8 +13,8 @@ export default function MarketplaceEmptyState({
 }: Props) {
   return (
     <div className="w-full py-12 flex flex-col items-center text-center gap-3">
-      <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-      <p className="text-sm text-gray-500 max-w-sm">{message}</p>
+      <h2 className="text-lg font-semibold text-ink">{title}</h2>
+      <p className="text-sm text-ink-faint max-w-sm">{message}</p>
 
       <Link
         href="/marketplace"

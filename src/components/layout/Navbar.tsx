@@ -6,6 +6,7 @@ import { ShoppingCart, Heart, User, Store } from "lucide-react";
 import { KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import CartDrawer, { getCartCount, subscribeToCart } from "./CartDrawer";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -104,11 +105,11 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-3">
+    <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-surface border-b border-line flex items-center px-4 gap-3">
       {/* Wordmark */}
       <Link href="/" className="flex items-center gap-1.5 shrink-0">
-        <span className="w-2 h-2 rounded-full bg-emerald-600" />
-        <span className="text-[15px] font-black text-gray-900 tracking-tight">MarketXpress</span>
+        <span className="w-2 h-2 rounded-full bg-accent" />
+        <span className="text-[15px] font-black text-ink tracking-tight">MarketXpress</span>
       </Link>
 
       {/* Search */}
@@ -118,11 +119,11 @@ export default function Navbar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search products, brands, categories…"
-          className="flex-1 border border-gray-200 border-r-0 rounded-l-md px-3 text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-emerald-500 focus:bg-white transition-colors"
+          className="flex-1 border border-line border-r-0 rounded-l-md px-3 text-sm bg-surface-2 text-ink placeholder:text-ink-faint outline-none focus:border-accent focus:bg-surface transition-colors"
         />
         <button
           type="submit"
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 rounded-r-md text-sm font-semibold transition-colors shrink-0"
+          className="bg-accent hover:bg-accent-hover text-on-accent px-4 rounded-r-md text-sm font-semibold transition-colors shrink-0"
         >
           Search
         </button>
@@ -133,25 +134,27 @@ export default function Navbar() {
         {!user && (
           <Link
             href="/auth/register"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-md transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-accent hover:bg-accent-hover text-on-accent text-xs font-semibold rounded-md transition-colors"
           >
             <Store className="w-3.5 h-3.5" />
             Sell on MX
           </Link>
         )}
 
-        <Link href="/dashboard/wishlist" className="relative p-2 text-gray-500 hover:text-emerald-600 transition-colors">
+        <ThemeToggle />
+
+        <Link href="/dashboard/wishlist" className="relative p-2 text-ink-faint hover:text-accent-hover transition-colors">
           <Heart className="w-5 h-5" />
         </Link>
 
         <button
           onClick={() => setCartOpen(true)}
-          className="relative p-2 text-gray-500 hover:text-emerald-600 transition-colors"
+          className="relative p-2 text-ink-faint hover:text-accent-hover transition-colors"
           aria-label={`Shopping cart, ${cartCount} items`}
         >
           <ShoppingCart className="w-5 h-5" />
           {cartCount > 0 && (
-            <span className="absolute top-1 right-1 min-w-[16px] h-4 bg-emerald-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-[3px]">
+            <span className="absolute top-1 right-1 min-w-[16px] h-4 bg-accent text-on-accent text-[9px] font-bold rounded-full flex items-center justify-center px-[3px]">
               {cartCount}
             </span>
           )}
@@ -167,9 +170,9 @@ export default function Navbar() {
               aria-label="Account menu"
               onClick={() => setAccountOpen((v) => !v)}
               onKeyDown={handleAccountButtonKeyDown}
-              className="flex items-center gap-1.5 p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-1.5 p-1.5 rounded-md hover:bg-surface-2 transition-colors"
             >
-              <div className="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-on-accent text-xs font-bold">
                 {user.email.charAt(0).toUpperCase()}
               </div>
             </button>
@@ -180,22 +183,22 @@ export default function Navbar() {
                 role="menu"
                 aria-label="Account menu"
                 onKeyDown={handleAccountMenuKeyDown}
-                className="absolute right-0 top-10 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50"
+                className="absolute right-0 top-10 w-48 bg-surface border border-line rounded-xl shadow-lg py-1 z-50"
               >
-                <div className="px-3 py-2 border-b border-gray-100">
-                  <p className="text-xs font-semibold text-gray-900 truncate">{user.email}</p>
-                  <p className="text-[10px] text-gray-400 capitalize">{user.role.toLowerCase()}</p>
+                <div className="px-3 py-2 border-b border-line">
+                  <p className="text-xs font-semibold text-ink truncate">{user.email}</p>
+                  <p className="text-[10px] text-ink-faint capitalize">{user.role.toLowerCase()}</p>
                 </div>
-                <Link href="/dashboard/orders" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">My Orders</Link>
-                <Link href="/dashboard/selling" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Selling Dashboard</Link>
-                <Link href="/dashboard/wallet" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Wallet</Link>
-                <Link href="/profile" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Profile</Link>
-                <button role="menuitem" tabIndex={-1} onClick={() => { void signOut(); setAccountOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none">Sign Out</button>
+                <Link href="/dashboard/orders" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">My Orders</Link>
+                <Link href="/dashboard/selling" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Selling Dashboard</Link>
+                <Link href="/dashboard/wallet" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Wallet</Link>
+                <Link href="/profile" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Profile</Link>
+                <button role="menuitem" tabIndex={-1} onClick={() => { void signOut(); setAccountOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-bad hover:bg-bad-bg focus:bg-bad-bg focus:outline-none">Sign Out</button>
               </div>
             )}
           </div>
         ) : (
-          <Link href="/auth/login" className="p-2 text-gray-500 hover:text-emerald-600 transition-colors">
+          <Link href="/auth/login" className="p-2 text-ink-faint hover:text-accent-hover transition-colors">
             <User className="w-5 h-5" />
           </Link>
         )}

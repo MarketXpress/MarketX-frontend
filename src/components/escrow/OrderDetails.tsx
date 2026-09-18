@@ -214,7 +214,7 @@ export default function OrderDetails({
         <span className="text-xs text-neutral-500 uppercase tracking-widest font-bold">
           Viewing as:
         </span>
-        <div className="flex bg-white/5 rounded-xl p-1 border border-white/10">
+        <div className="flex bg-surface/5 rounded-xl p-1 border border-white/10">
           {(["buyer", "seller"] as ViewRole[]).map((role) => (
             <button
               key={role}
@@ -233,7 +233,7 @@ export default function OrderDetails({
       </div>
 
       {/* Timeline */}
-      <div className="p-8 bg-white/5 border border-white/10 rounded-3xl">
+      <div className="p-8 bg-surface/5 border border-white/10 rounded-3xl">
         <TransactionTimeline currentState={transaction.currentState} />
       </div>
 
@@ -246,7 +246,7 @@ export default function OrderDetails({
             "p-6 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
             actionNeeded === viewRole
               ? "bg-blue-500/10 border-blue-500/30"
-              : "bg-white/5 border-white/10",
+              : "bg-surface/5 border-white/10",
           )}
         >
           <div className="flex items-center gap-3">
@@ -255,7 +255,7 @@ export default function OrderDetails({
                 <ArrowRight className="w-5 h-5 text-white" />
               </div>
             ) : (
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-surface/10 rounded-full flex items-center justify-center shrink-0">
                 <Wallet className="w-5 h-5 text-neutral-400" />
               </div>
             )}
@@ -280,7 +280,7 @@ export default function OrderDetails({
         {/* Left: Details + Events */}
         <div className="lg:col-span-2 space-y-6">
           {/* Asset Details Card */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-inner space-y-4">
+          <div className="p-6 bg-surface/5 border border-white/10 rounded-3xl shadow-inner space-y-4">
             <h3 className="text-xs font-black text-neutral-500 uppercase tracking-widest border-b border-white/5 pb-2">
               Asset Details
             </h3>
@@ -297,7 +297,7 @@ export default function OrderDetails({
                 <span className="text-xs text-neutral-500 uppercase block mb-1">
                   Category
                 </span>
-                <span className="inline-block px-3 py-1 bg-white/10 text-white rounded-lg text-xs font-bold uppercase">
+                <span className="inline-block px-3 py-1 bg-surface/10 text-white rounded-lg text-xs font-bold uppercase">
                   {transaction.assetCategory}
                 </span>
               </div>
@@ -322,7 +322,7 @@ export default function OrderDetails({
           </div>
 
           {/* Event Log */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-inner">
+          <div className="p-6 bg-surface/5 border border-white/10 rounded-3xl shadow-inner">
             <EventLog events={transaction.events} />
           </div>
         </div>
@@ -330,7 +330,7 @@ export default function OrderDetails({
         {/* Right: Actions + Timer */}
         <div className="space-y-6">
           {/* Parties */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-inner space-y-4">
+          <div className="p-6 bg-surface/5 border border-white/10 rounded-3xl shadow-inner space-y-4">
             <h3 className="text-xs font-black text-neutral-500 uppercase tracking-widest border-b border-white/5 pb-2">
               Parties
             </h3>
@@ -361,7 +361,7 @@ export default function OrderDetails({
           {/* Countdown Timer */}
           {transaction.currentState !== "released" &&
             transaction.currentState !== "disputed" && (
-              <div className="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-inner">
+              <div className="p-6 bg-surface/5 border border-white/10 rounded-3xl shadow-inner">
                 <CountdownTimer
                   targetDate={transaction.autoReleaseAt}
                   label="Auto-release in"
@@ -372,7 +372,7 @@ export default function OrderDetails({
           {/* Action Buttons */}
           {transaction.currentState !== "released" &&
             transaction.currentState !== "disputed" && (
-              <div className="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-inner space-y-4">
+              <div className="p-6 bg-surface/5 border border-white/10 rounded-3xl shadow-inner space-y-4">
                 <h3 className="text-xs font-black text-neutral-500 uppercase tracking-widest border-b border-white/5 pb-2">
                   Actions
                 </h3>
@@ -463,7 +463,7 @@ export default function OrderDetails({
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="p-6 bg-red-500/10 border border-red-500/20 rounded-3xl text-center space-y-2"
+              className="p-6 bg-bad/10 border border-red-500/20 rounded-3xl text-center space-y-2"
             >
               <AlertTriangle className="w-10 h-10 text-red-400 mx-auto" />
               <h3 className="text-lg font-black text-red-400">

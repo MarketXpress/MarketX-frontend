@@ -37,9 +37,12 @@ function useCountdown(durationSeconds: number) {
     return ts;
   });
 
-  const [remainingMs, setRemainingMs] = useState(() =>
-    Math.max(0, targetTimestamp - Date.now())
-  );
+  // Seeded from the duration rather than from the clock, so the server and
+  // the browser render the same first frame. Reading Date.now() here made the
+  // two disagree by the length of the request and threw a hydration error on
+  // every page load. The interval below replaces it with the real remaining
+  // time a second later.
+  const [remainingMs, setRemainingMs] = useState(durationSeconds * 1000);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -66,22 +69,22 @@ export default function FlashSaleSection({ products }: { products: Product[] }) 
       {/* Header row */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-base font-black text-gray-900">⚡ Flash Sale</h2>
-          <span className="text-[10px] font-bold bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse">
+          <h2 className="text-base font-black text-ink">⚡ Flash Sale</h2>
+          <span className="text-[10px] font-bold bg-bad text-white px-2 py-0.5 rounded-full animate-pulse">
             LIVE
           </span>
           <div className="flex items-center gap-1">
             {[h, m, s].map((unit, i) => (
               <span key={i} className="flex items-center gap-1">
-                <span className="bg-gray-900 text-white text-xs font-black px-1.5 py-0.5 rounded">
+                <span className="bg-ink text-bg text-xs font-black px-1.5 py-0.5 rounded">
                   {unit}
                 </span>
-                {i < 2 && <span className="text-gray-400 text-xs font-bold">:</span>}
+                {i < 2 && <span className="text-ink-faint text-xs font-bold">:</span>}
               </span>
             ))}
           </div>
         </div>
-        <Link href="/" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">
+        <Link href="/" className="text-xs font-semibold text-accent hover:text-accent-hover">
           View All →
         </Link>
       </div>

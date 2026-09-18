@@ -77,10 +77,10 @@ export default function RegisterPage() {
   };
 
   const fieldClass = (field: keyof FormErrors, isTouched: boolean) =>
-    `w-full border rounded-lg px-3 py-2.5 text-sm text-gray-900 bg-white placeholder:text-gray-400 outline-none focus:ring-2 transition-all ${
+    `w-full border rounded-lg px-3 py-2.5 text-sm text-ink bg-surface placeholder:text-ink-faint outline-none focus:ring-2 transition-all ${
       errors[field] && isTouched
         ? "border-red-300 focus:ring-red-100"
-        : "border-gray-200 focus:border-emerald-500 focus:ring-emerald-100"
+        : "border-line focus:border-accent"
     }`;
 
   const isSeller = role === "SELLER";
@@ -88,36 +88,36 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left panel */}
-      <div className="hidden lg:flex w-[42%] bg-gray-900 flex-col justify-between p-10">
+      <div className="hidden lg:flex w-[42%] bg-ink flex-col justify-between p-10">
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="w-2 h-2 rounded-full bg-accent" />
           <span className="text-sm font-black text-white">MarketXpress</span>
         </div>
         <div>
           <p className="text-3xl font-black text-white leading-tight tracking-tight mb-3">
             &ldquo;Join 12,000+<br />traders worldwide.&rdquo;
           </p>
-          <p className="text-sm text-gray-400 leading-relaxed">
+          <p className="text-sm text-ink-faint leading-relaxed">
             Whether you&apos;re buying the latest tech or selling handmade goods,
             MarketXpress keeps every transaction safe with escrow smart contracts.
           </p>
         </div>
-        <p className="text-xs text-gray-600">&copy; 2026 MarketXpress</p>
+        <p className="text-xs text-ink-muted">&copy; 2026 MarketXpress</p>
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center bg-white p-6">
+      <div className="flex-1 flex items-center justify-center bg-surface p-6">
         <div className="w-full max-w-sm">
           <div className="mb-6">
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight mb-1">
+            <h1 className="text-2xl font-black text-ink tracking-tight mb-1">
               Create your account
             </h1>
-            <p className="text-sm text-gray-500">Start trading on MarketXpress today</p>
+            <p className="text-sm text-ink-faint">Start trading on MarketXpress today</p>
           </div>
 
           {/* Role selector */}
           <div
-            className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl mb-5"
+            className="grid grid-cols-2 gap-2 p-1 bg-surface-2 rounded-xl mb-5"
             role="radiogroup"
             aria-label="Account type"
           >
@@ -129,8 +129,8 @@ export default function RegisterPage() {
                 aria-pressed={role === r}
                 className={`py-2 rounded-lg text-xs font-bold transition-all ${
                   role === r
-                    ? "bg-white shadow text-gray-900"
-                    : "text-gray-400 hover:text-gray-600"
+                    ? "bg-surface shadow text-ink"
+                    : "text-ink-faint hover:text-ink-muted"
                 }`}
               >
                 {r === "BUYER" ? "🛒 I'm a Buyer" : "🏪 I'm a Seller"}
@@ -142,7 +142,7 @@ export default function RegisterPage() {
             {errors.form && (
               <div
                 role="alert"
-                className="px-3 py-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm"
+                className="px-3 py-2.5 rounded-lg bg-bad-bg border border-bad-line text-bad text-sm"
               >
                 {errors.form}
               </div>
@@ -150,7 +150,7 @@ export default function RegisterPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="firstName" className="block text-xs font-bold text-gray-700 mb-1.5">
+                <label htmlFor="firstName" className="block text-xs font-bold text-ink-muted mb-1.5">
                   First Name
                 </label>
                 <input
@@ -164,13 +164,13 @@ export default function RegisterPage() {
                   aria-describedby={errors.firstName && touched.firstName ? "firstName-error" : undefined}
                 />
                 {errors.firstName && touched.firstName && (
-                  <p id="firstName-error" className="text-xs text-red-600 mt-1" role="alert">
+                  <p id="firstName-error" className="text-xs text-bad mt-1" role="alert">
                     {errors.firstName}
                   </p>
                 )}
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-xs font-bold text-gray-700 mb-1.5">
+                <label htmlFor="lastName" className="block text-xs font-bold text-ink-muted mb-1.5">
                   Last Name
                 </label>
                 <input
@@ -184,7 +184,7 @@ export default function RegisterPage() {
                   aria-describedby={errors.lastName && touched.lastName ? "lastName-error" : undefined}
                 />
                 {errors.lastName && touched.lastName && (
-                  <p id="lastName-error" className="text-xs text-red-600 mt-1" role="alert">
+                  <p id="lastName-error" className="text-xs text-bad mt-1" role="alert">
                     {errors.lastName}
                   </p>
                 )}
@@ -192,7 +192,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-xs font-bold text-gray-700 mb-1.5">
+              <label htmlFor="email" className="block text-xs font-bold text-ink-muted mb-1.5">
                 Email Address
               </label>
               <input
@@ -206,14 +206,14 @@ export default function RegisterPage() {
                 aria-describedby={errors.email && touched.email ? "email-error" : undefined}
               />
               {errors.email && touched.email && (
-                <p id="email-error" className="text-xs text-red-600 mt-1" role="alert">
+                <p id="email-error" className="text-xs text-bad mt-1" role="alert">
                   {errors.email}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-bold text-gray-700 mb-1.5">
+              <label htmlFor="password" className="block text-xs font-bold text-ink-muted mb-1.5">
                 Password
               </label>
               <input
@@ -227,7 +227,7 @@ export default function RegisterPage() {
                 aria-describedby={errors.password && touched.password ? "password-error" : undefined}
               />
               {errors.password && touched.password && (
-                <p id="password-error" className="text-xs text-red-600 mt-1" role="alert">
+                <p id="password-error" className="text-xs text-bad mt-1" role="alert">
                   {errors.password}
                 </p>
               )}
@@ -239,7 +239,7 @@ export default function RegisterPage() {
               className={`w-full font-bold py-2.5 rounded-lg text-white transition-colors flex items-center justify-center gap-2 text-sm mt-1 disabled:opacity-50 disabled:cursor-not-allowed ${
                 isSeller
                   ? "bg-violet-600 hover:bg-violet-700"
-                  : "bg-emerald-600 hover:bg-emerald-700"
+                  : "bg-accent hover:bg-accent-hover"
               }`}
             >
               {isSubmitting ? (
@@ -253,9 +253,9 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-5">
+          <p className="text-center text-sm text-ink-faint mt-5">
             Already have an account?{" "}
-            <Link href="/auth/login" className="text-emerald-600 font-bold hover:text-emerald-700">
+            <Link href="/auth/login" className="text-accent font-bold hover:text-accent-hover">
               Sign in
             </Link>
           </p>

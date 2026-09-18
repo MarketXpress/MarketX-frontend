@@ -15,12 +15,13 @@ export default function DashboardSubnav({ title }: { title: string }) {
   const pathname = usePathname();
 
   return (
-    <div className="bg-white border-b border-gray-200 px-4 sm:px-6 h-12 flex items-center justify-between gap-4">
-      <h1 className="text-sm font-black text-gray-900 hidden sm:block shrink-0">{title}</h1>
+    <div className="bg-surface border-b border-line px-4 sm:px-6 h-12 flex items-center justify-between gap-4">
+      <h1 className="text-sm font-bold text-ink hidden sm:block shrink-0">{title}</h1>
       <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
         {TABS.map((tab) => {
           const active =
             pathname === tab.href ||
+            pathname.startsWith(`${tab.href}/`) ||
             (tab.href === "/dashboard/orders" && pathname === "/dashboard");
           return (
             <Link
@@ -28,8 +29,8 @@ export default function DashboardSubnav({ title }: { title: string }) {
               href={tab.href}
               className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
                 active
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700"
+                  ? "bg-accent text-on-accent"
+                  : "bg-surface-2 text-ink-muted hover:bg-surface-3 hover:text-ink"
               }`}
             >
               {tab.label}

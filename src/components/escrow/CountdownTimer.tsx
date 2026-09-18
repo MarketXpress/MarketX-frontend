@@ -45,16 +45,16 @@ export default function CountdownTimer({ targetDate, label }: CountdownTimerProp
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 text-gray-400 text-xs font-bold uppercase tracking-wider">
-        <Timer className="w-4 h-4 text-emerald-600" /> {label}
+      <div className="flex items-center gap-2 text-ink-faint text-xs font-bold uppercase tracking-wider">
+        <Timer className="w-4 h-4 text-accent" /> {label}
       </div>
       <div className="flex gap-3">
         {Object.entries(timeLeft).map(([unit, value]) => (
           <div key={unit} className="flex flex-col items-center">
-            <div className="w-14 h-14 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center text-xl font-black text-gray-900 tabular-nums">
+            <div className="w-14 h-14 bg-surface-2 border border-line rounded-xl flex items-center justify-center text-xl font-black text-ink tabular-nums">
               {String(value).padStart(2, "0")}
             </div>
-            <span className="text-[10px] text-gray-400 uppercase mt-1 font-bold">{unit}</span>
+            <span className="text-[10px] text-ink-faint uppercase mt-1 font-bold">{unit}</span>
           </div>
         ))}
       </div>

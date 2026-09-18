@@ -8,9 +8,9 @@ type Props = {
 
 export default function AuthNavbar({ variant = "login" }: Props) {
   return (
-    <nav className="w-full px-6 py-4 flex items-center justify-between border-b bg-white">
+    <nav className="w-full px-6 py-4 flex items-center justify-between border-b bg-surface">
       {/* Logo / Brand */}
-      <Link href="/" className="text-xl font-bold text-gray-900">
+      <Link href="/" className="text-xl font-bold text-ink">
         DRIP
       </Link>
 
@@ -18,7 +18,7 @@ export default function AuthNavbar({ variant = "login" }: Props) {
       <div className="flex items-center gap-4">
         {variant === "login" ? (
           <>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-ink-muted">
               Don’t have an account?
             </span>
             <Link
@@ -30,7 +30,7 @@ export default function AuthNavbar({ variant = "login" }: Props) {
           </>
         ) : (
           <>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-ink-muted">
               Already have an account?
             </span>
             <Link

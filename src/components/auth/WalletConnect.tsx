@@ -63,7 +63,7 @@ export default function WalletConnect() {
           <button
             onClick={connect}
             disabled={loading}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors font-semibold text-sm active:scale-95"
+            className="flex items-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 text-on-accent px-4 py-2 rounded-lg transition-colors font-semibold text-sm active:scale-95"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -73,17 +73,17 @@ export default function WalletConnect() {
             Connect Wallet
           </button>
         ) : (
-          <div className="flex items-center gap-3 bg-white border border-gray-200 px-3 py-1.5 rounded-lg">
+          <div className="flex items-center gap-3 bg-surface border border-line px-3 py-1.5 rounded-lg">
             <div className="flex flex-col items-end">
-              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Stellar Connected</span>
-              <span className="text-gray-900 text-sm font-semibold">{formatAddress(address)}</span>
+              <span className="text-[10px] text-ink-faint font-bold uppercase tracking-wider">Stellar Connected</span>
+              <span className="text-ink text-sm font-semibold">{formatAddress(address)}</span>
             </div>
-            <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="w-7 h-7 rounded-full bg-accent-soft flex items-center justify-center border border-accent-line">
+              <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
             </div>
             <button
               onClick={() => setShowDisconnectConfirm(true)}
-              className="ml-1 p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 hover:text-red-500"
+              className="ml-1 p-1.5 hover:bg-surface-2 rounded-lg transition-colors text-ink-faint hover:text-bad"
               aria-label="Disconnect wallet"
             >
               <LogOut className="w-4 h-4" />

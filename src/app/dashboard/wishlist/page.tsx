@@ -41,27 +41,27 @@ export default function WishlistPage() {
   }, [wishlistIds]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-bg">
       <div className="pt-14">
         <DashboardSubnav title="My Account" />
 
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-base font-black text-gray-900">My Wishlist</h2>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <h2 className="text-base font-black text-ink">My Wishlist</h2>
+              <p className="text-xs text-ink-faint mt-0.5">
                 {wishlistItems.length} saved items
               </p>
             </div>
           </div>
 
           {wishlistItems.length === 0 ? (
-            <div className="bg-white border border-gray-200 rounded-xl py-16 text-center">
+            <div className="bg-surface border border-line rounded-xl py-16 text-center">
               <p className="text-2xl mb-2">♡</p>
-              <p className="text-sm font-bold text-gray-900 mb-1">
+              <p className="text-sm font-bold text-ink mb-1">
                 Your wishlist is empty
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-ink-faint">
                 Save items you love by clicking the heart icon on any product.
               </p>
             </div>

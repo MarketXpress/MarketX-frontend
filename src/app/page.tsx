@@ -16,7 +16,7 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-bg">
       <div className="max-w-7xl mx-auto px-4 pt-24 pb-0">
         {/* Hero banners */}
         <section className="mb-6">
@@ -38,8 +38,8 @@ export default async function Home() {
         {/* New Arrivals product grid */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-black text-gray-900">🆕 New Arrivals</h2>
-            <span className="text-xs font-semibold text-emerald-600 cursor-pointer hover:text-emerald-700">
+            <h2 className="text-base font-black text-ink">🆕 New Arrivals</h2>
+            <span className="text-xs font-semibold text-accent cursor-pointer hover:text-accent-hover">
               View All →
             </span>
           </div>

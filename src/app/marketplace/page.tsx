@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function MarketplacePage() {
   return (
-    <div className="min-h-screen bg-gray-50 pt-14">
+    <div className="min-h-screen bg-bg pt-24">
       <Suspense fallback={<MarketplaceLoadingState />}>
         <MarketplaceSection />
       </Suspense>

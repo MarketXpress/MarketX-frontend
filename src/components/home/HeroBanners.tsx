@@ -1,47 +1,68 @@
 import Link from "next/link";
 
+/**
+ * The three banners at the top of the home page.
+ *
+ * The large one is a deliberately dark panel in both themes, so its text uses
+ * fixed light values rather than the ink tokens — those invert, and an
+ * inverting foreground on a fixed dark ground goes invisible in one of the two
+ * modes. The two small ones are ordinary surfaces and do follow the tokens.
+ */
 export default function HeroBanners() {
   return (
-    <div className="flex gap-3">
-      {/* Main banner (2/3 width) */}
-      <div className="flex-[2] relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 flex flex-col justify-between min-h-[200px] overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+    <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="relative flex min-h-[200px] flex-[2] flex-col justify-between overflow-hidden rounded-xl bg-[#14151D] p-6">
+        {/* A soft accent bloom, purely decorative. */}
+        <div
+          className="absolute right-0 top-0 h-48 w-48 -translate-y-1/2 translate-x-1/2 rounded-full bg-accent/25 blur-3xl"
+          aria-hidden="true"
+        />
+
         <div className="relative z-10">
-          <span className="inline-block bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-3">
-            🔐 Escrow Protected
+          <span className="mb-3 inline-block rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white/80">
+            Escrow protected
           </span>
-          <h1 className="text-2xl font-black text-white leading-tight tracking-tight mb-2">
-            Buy anything.<br />Pay with crypto.
+
+          <h1 className="mb-2 text-2xl font-extrabold leading-tight tracking-tight text-white">
+            Buy anything.
+            <br />
+            Pay with crypto.
           </h1>
-          <p className="text-gray-400 text-xs leading-relaxed mb-4">
-            Every purchase secured by Stellar smart contracts.<br />Zero risk, full speed.
+
+          <p className="mb-4 text-xs leading-relaxed text-white/60">
+            The money sits in a Stellar smart contract until you confirm the item arrived.
+            <br />
+            Not with us, and not with the seller.
           </p>
+
           <Link
-            href="/auth/register"
-            className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors"
+            href="/marketplace"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-xs font-bold text-[#14151D] transition-colors hover:bg-white/90"
           >
-            Shop Now →
+            Browse the marketplace →
           </Link>
         </div>
       </div>
 
-      {/* Side banners (1/3 width, stacked) */}
-      <div className="flex-1 flex flex-col gap-3">
+      <div className="flex flex-1 flex-col gap-3">
         <Link
           href="/?category=Electronics"
-          className="flex-1 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-4 hover:border-emerald-300 transition-colors group"
+          className="group flex-1 rounded-xl border border-accent-line bg-accent-soft p-4 transition-colors hover:border-accent"
         >
-          <div className="text-lg mb-1">📱</div>
-          <p className="text-sm font-black text-gray-900 group-hover:text-emerald-700 transition-colors">New Arrivals</p>
-          <p className="text-[11px] text-gray-500 mt-0.5">Up to 30% off</p>
+          <p className="text-sm font-bold text-ink transition-colors group-hover:text-accent">
+            New arrivals
+          </p>
+          <p className="mt-0.5 text-[11px] text-ink-muted">Listed in the last seven days</p>
         </Link>
+
         <Link
           href="/?category=Fashion"
-          className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-4 hover:border-blue-300 transition-colors group"
+          className="group flex-1 rounded-xl border border-line bg-surface-2 p-4 transition-colors hover:border-line-strong"
         >
-          <div className="text-lg mb-1">🌟</div>
-          <p className="text-sm font-black text-gray-900 group-hover:text-blue-700 transition-colors">Top Sellers</p>
-          <p className="text-[11px] text-gray-500 mt-0.5">Verified merchants</p>
+          <p className="text-sm font-bold text-ink transition-colors group-hover:text-accent">
+            Top sellers
+          </p>
+          <p className="mt-0.5 text-[11px] text-ink-muted">Ranked by completed deals</p>
         </Link>
       </div>
     </div>

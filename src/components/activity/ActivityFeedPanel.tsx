@@ -28,9 +28,9 @@ const ICONS: Record<ActivityType, LucideIcon> = {
 function severityTone(severity: ActivitySeverity) {
   switch (severity) {
     case "success":
-      return "border-emerald-200 bg-emerald-50 text-emerald-600";
+      return "border-accent-line bg-accent-soft text-accent";
     case "warning":
-      return "border-amber-200 bg-amber-50 text-amber-600";
+      return "border-warn-line bg-warn-bg text-warn";
     default:
       return "border-blue-200 bg-blue-50 text-blue-600";
   }
@@ -54,39 +54,39 @@ export default function ActivityFeedPanel({
   const { activities, unreadCount, markAllAsRead, clearActivities } = useActivityFeed();
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8">
+    <section className="rounded-2xl border border-line bg-surface p-6 md:p-8">
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.25em] text-emerald-700">
+          <div className="inline-flex items-center gap-2 rounded-full border border-accent-line bg-accent-soft px-3 py-1 text-[10px] font-black uppercase tracking-[0.25em] text-accent">
             <HeartPulse className="h-3.5 w-3.5" />
             Activity Feed
           </div>
-          <h2 className="mt-3 text-xl font-black tracking-tight text-gray-900 md:text-2xl">
+          <h2 className="mt-3 text-xl font-black tracking-tight text-ink md:text-2xl">
             Recent user activity
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-gray-500">
+          <p className="mt-2 max-w-2xl text-sm text-ink-faint">
             Keep track of listings, order updates, profile changes, and security events in one place.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+          <div className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-center">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">
               Unread
             </p>
-            <p className="mt-1 text-xl font-black text-gray-900">{unreadCount}</p>
+            <p className="mt-1 text-xl font-black text-ink">{unreadCount}</p>
           </div>
           <button
             type="button"
             onClick={markAllAsRead}
-            className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50"
+            className="rounded-xl border border-line bg-surface px-4 py-3 text-sm font-bold text-ink-muted transition-colors hover:bg-surface-2"
           >
             Mark all read
           </button>
           <button
             type="button"
             onClick={clearActivities}
-            className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-500 transition-colors hover:bg-gray-100"
+            className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm font-bold text-ink-faint transition-colors hover:bg-surface-2"
           >
             Clear feed
           </button>
@@ -95,8 +95,8 @@ export default function ActivityFeedPanel({
 
       <div className={cn("space-y-3", compact && "space-y-2")}>
         {activities.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-12 text-center">
-            <p className="text-sm font-medium text-gray-400">
+          <div className="rounded-2xl border border-dashed border-line bg-surface-2 px-6 py-12 text-center">
+            <p className="text-sm font-medium text-ink-faint">
               No recent activity yet. Actions you take across the app will appear here.
             </p>
           </div>
@@ -107,8 +107,8 @@ export default function ActivityFeedPanel({
               <article
                 key={activity.id}
                 className={cn(
-                  "group flex gap-4 rounded-xl border p-4 transition-all hover:border-gray-300 hover:bg-gray-50",
-                  activity.isRead ? "border-gray-200 bg-white" : "border-blue-200 bg-blue-50",
+                  "group flex gap-4 rounded-xl border p-4 transition-all hover:border-line-strong hover:bg-surface-2",
+                  activity.isRead ? "border-line bg-surface" : "border-blue-200 bg-blue-50",
                 )}
               >
                 <div
@@ -123,12 +123,12 @@ export default function ActivityFeedPanel({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-col gap-1 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <h3 className="text-sm font-bold text-gray-900">{activity.title}</h3>
-                      <p className="mt-0.5 text-xs leading-relaxed text-gray-500">
+                      <h3 className="text-sm font-bold text-ink">{activity.title}</h3>
+                      <p className="mt-0.5 text-xs leading-relaxed text-ink-faint">
                         {activity.description}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-ink-faint">
                       <Clock3 className="h-3.5 w-3.5" />
                       {timeAgo(activity.timestamp)}
                     </div>
@@ -137,7 +137,7 @@ export default function ActivityFeedPanel({
                   {activity.href ? (
                     <Link
                       href={activity.href}
-                      className="mt-2 inline-flex text-xs font-bold text-emerald-600 transition-colors hover:text-emerald-700"
+                      className="mt-2 inline-flex text-xs font-bold text-accent transition-colors hover:text-accent-hover"
                     >
                       View related page
                     </Link>

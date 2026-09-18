@@ -16,12 +16,12 @@ export default function TransactionTimeline({ currentState }: TransactionTimelin
     <div className="w-full">
       <div className="flex items-center justify-between relative">
         {/* Background track */}
-        <div className="absolute top-5 left-5 right-5 h-1 bg-white/10 rounded-full z-0" />
+        <div className="absolute top-5 left-5 right-5 h-1 bg-surface/10 rounded-full z-0" />
         {/* Active track */}
         <motion.div
           className={cn(
             "absolute top-5 left-5 h-1 rounded-full z-[1]",
-            isDisputed ? "bg-red-500" : "bg-blue-500"
+            isDisputed ? "bg-bad" : "bg-blue-500"
           )}
           initial={{ width: "0%" }}
           animate={{

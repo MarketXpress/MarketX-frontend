@@ -82,22 +82,22 @@ export default function MarketplaceSection() {
     <section id="explore" className="relative z-10 max-w-7xl mx-auto px-6 py-16 w-full min-h-screen flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-10">
         <ScrollReveal className="flex flex-col gap-3">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-gray-900">Marketplace</h2>
-          <p className="text-gray-500 max-w-xl">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-ink">Marketplace</h2>
+          <p className="text-ink-faint max-w-xl">
             {searchParams.get("q")
               ? `Results for "${searchParams.get("q")}" (${totalCount} total)`
               : "Discover verified assets currently secured in escrow."}
           </p>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.2} className="w-full md:w-auto flex justify-between items-center bg-white border border-gray-200 p-2 rounded-xl lg:hidden">
+        <ScrollReveal delay={0.2} className="w-full md:w-auto flex justify-between items-center bg-surface border border-line p-2 rounded-xl lg:hidden">
             <button
               onClick={() => setIsMobileFiltersOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover text-on-accent font-bold rounded-lg transition-colors text-sm"
             >
               <Filter className="w-4 h-4" /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
             </button>
-            <span className="text-sm font-medium text-gray-400 px-4">
+            <span className="text-sm font-medium text-ink-faint px-4">
                {`${totalCount} Results`}
             </span>
         </ScrollReveal>
@@ -121,7 +121,7 @@ export default function MarketplaceSection() {
               </div>
 
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-ink-faint">
                   Showing {paginatedAssets.length} of {filteredAssets.length} results
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
@@ -131,8 +131,8 @@ export default function MarketplaceSection() {
                       onClick={() => goToPage(pageNumber)}
                       className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-all ${
                         pageNumber === page
-                          ? "bg-emerald-600 text-white"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                          ? "bg-accent text-on-accent"
+                          : "bg-surface-2 text-ink-faint hover:bg-surface-3"
                       }`}
                     >
                       {pageNumber}
@@ -141,7 +141,7 @@ export default function MarketplaceSection() {
                   {hasMore && (
                     <button
                       onClick={() => goToPage(page + 1)}
-                      className="rounded-lg px-3 py-1.5 text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      className="rounded-lg px-3 py-1.5 text-sm font-semibold bg-surface-2 text-ink-muted hover:bg-surface-3"
                     >
                       Load more
                     </button>
@@ -151,12 +151,12 @@ export default function MarketplaceSection() {
             </>
           ) : (
             // No Results State
-            <div className="w-full h-80 flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl text-center p-8">
-              <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mb-5">
-                <SearchX className="w-8 h-8 text-emerald-600" />
+            <div className="w-full h-80 flex flex-col items-center justify-center bg-surface border border-line rounded-2xl text-center p-8">
+              <div className="w-16 h-16 bg-accent-soft rounded-full flex items-center justify-center mb-5">
+                <SearchX className="w-8 h-8 text-accent" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">No assets found</h3>
-              <p className="text-gray-400 max-w-md text-sm">
+              <h3 className="text-xl font-bold text-ink mb-2">No assets found</h3>
+              <p className="text-ink-faint max-w-md text-sm">
                 We couldn&apos;t find anything matching your current filters and search criteria. Try adjusting your parameters.
               </p>
             </div>

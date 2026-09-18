@@ -24,15 +24,15 @@ const variantConfig: Record<
 > = {
   danger: {
     icon: ShieldAlert,
-    iconClass: "text-red-400 bg-red-500/10",
+    iconClass: "text-red-400 bg-bad/10",
     confirmClass:
-      "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/30",
+      "bg-bad hover:bg-bad text-white shadow-lg shadow-red-600/30",
   },
   warning: {
     icon: AlertTriangle,
-    iconClass: "text-amber-400 bg-amber-500/10",
+    iconClass: "text-warn bg-warn/10",
     confirmClass:
-      "bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30",
+      "bg-warn hover:bg-warn text-white shadow-lg shadow-amber-600/30",
   },
   default: {
     icon: Info,
@@ -114,7 +114,7 @@ export default function ConfirmModal({
               <div className="flex gap-3 w-full">
                 <button
                   onClick={onCancel}
-                  className="flex-1 px-6 py-3 rounded-xl font-bold text-sm bg-white/5 hover:bg-white/10 text-neutral-300 transition-all border border-white/10 active:scale-95"
+                  className="flex-1 px-6 py-3 rounded-xl font-bold text-sm bg-surface/5 hover:bg-surface/10 text-neutral-300 transition-all border border-white/10 active:scale-95"
                 >
                   {cancelLabel}
                 </button>

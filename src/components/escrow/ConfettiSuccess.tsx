@@ -82,10 +82,10 @@ function ConfettiBurst({ onClose }: { onClose: () => void }) {
         transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
       >
-        <div className="bg-white border border-gray-200 rounded-3xl px-12 py-10 text-center shadow-2xl">
+        <div className="bg-surface border border-line rounded-3xl px-12 py-10 text-center shadow-2xl">
           <div className="text-6xl mb-4">🎉</div>
-          <h2 className="text-3xl font-black text-gray-900 mb-2">Funds Released!</h2>
-          <p className="text-gray-500">The escrow has been completed successfully.</p>
+          <h2 className="text-3xl font-black text-ink mb-2">Funds Released!</h2>
+          <p className="text-ink-faint">The escrow has been completed successfully.</p>
         </div>
       </motion.div>
     </motion.div>

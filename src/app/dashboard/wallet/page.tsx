@@ -23,39 +23,39 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-bg">
       <div className="pt-14">
         <DashboardSubnav title="My Account" />
 
         <div className="max-w-3xl mx-auto px-4 py-6">
           {/* Balance card */}
           <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 mb-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-accent-soft rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-1">
-                <Wallet className="w-4 h-4 text-emerald-400" />
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                <Wallet className="w-4 h-4 text-accent" />
+                <span className="text-xs font-bold text-ink-faint uppercase tracking-wider">
                   Stellar Wallet
                 </span>
               </div>
               <p className="text-3xl font-black text-white tracking-tight mb-0.5">
                 4,200 XLM
               </p>
-              <p className="text-sm text-gray-400 mb-5">≈ $866.04 USD</p>
+              <p className="text-sm text-ink-faint mb-5">≈ $866.04 USD</p>
 
               {/* Address */}
-              <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
-                <span className="text-[11px] text-gray-300 font-mono flex-1 truncate">
+              <div className="flex items-center gap-2 bg-surface/10 rounded-lg px-3 py-2">
+                <span className="text-[11px] text-ink-faint font-mono flex-1 truncate">
                   {MOCK_ADDRESS.slice(0, 12)}…{MOCK_ADDRESS.slice(-6)}
                 </span>
                 <button
                   onClick={handleCopy}
-                  className="text-gray-400 hover:text-white transition-colors shrink-0"
+                  className="text-ink-faint hover:text-white transition-colors shrink-0"
                 >
                   <Copy className="w-3.5 h-3.5" />
                 </button>
                 {copied && (
-                  <span className="text-[10px] text-emerald-400 font-semibold">
+                  <span className="text-[10px] text-accent font-semibold">
                     Copied!
                   </span>
                 )}
@@ -74,10 +74,10 @@ export default function WalletPage() {
             ).map(({ label, Icon }) => (
               <button
                 key={label}
-                className="flex flex-col items-center gap-1.5 bg-white border border-gray-200 rounded-xl py-4 hover:border-emerald-400 hover:bg-emerald-50 transition-colors group"
+                className="flex flex-col items-center gap-1.5 bg-surface border border-line rounded-xl py-4 hover:border-accent hover:bg-accent-soft transition-colors group"
               >
-                <Icon className="w-5 h-5 text-gray-500 group-hover:text-emerald-600 transition-colors" />
-                <span className="text-xs font-bold text-gray-700 group-hover:text-emerald-700 transition-colors">
+                <Icon className="w-5 h-5 text-ink-faint group-hover:text-accent-hover transition-colors" />
+                <span className="text-xs font-bold text-ink-muted group-hover:text-accent-hover transition-colors">
                   {label}
                 </span>
               </button>
@@ -85,39 +85,39 @@ export default function WalletPage() {
           </div>
 
           {/* Transaction history */}
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-100">
-              <h2 className="text-sm font-black text-gray-900">Transaction History</h2>
+          <div className="bg-surface border border-line rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-line">
+              <h2 className="text-sm font-black text-ink">Transaction History</h2>
             </div>
             <div className="divide-y divide-gray-100">
               {MOCK_TXS.map((tx) => (
                 <div key={tx.id} className="flex items-center gap-4 px-5 py-3.5">
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                      tx.type === "received" ? "bg-emerald-50" : "bg-gray-100"
+                      tx.type === "received" ? "bg-accent-soft" : "bg-surface-2"
                     }`}
                   >
                     {tx.type === "received" ? (
-                      <ArrowDownLeft className="w-4 h-4 text-emerald-600" />
+                      <ArrowDownLeft className="w-4 h-4 text-accent" />
                     ) : (
-                      <ArrowUpRight className="w-4 h-4 text-gray-500" />
+                      <ArrowUpRight className="w-4 h-4 text-ink-faint" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-gray-900">{tx.label}</p>
-                    <p className="text-[11px] text-gray-400">
+                    <p className="text-sm font-bold text-ink">{tx.label}</p>
+                    <p className="text-[11px] text-ink-faint">
                       {tx.from} · {tx.date}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
                     <p
                       className={`text-sm font-black ${
-                        tx.type === "received" ? "text-emerald-600" : "text-gray-700"
+                        tx.type === "received" ? "text-accent" : "text-ink-muted"
                       }`}
                     >
                       {tx.amount}
                     </p>
-                    <p className="text-[11px] text-gray-400">{tx.usd}</p>
+                    <p className="text-[11px] text-ink-faint">{tx.usd}</p>
                   </div>
                 </div>
               ))}
