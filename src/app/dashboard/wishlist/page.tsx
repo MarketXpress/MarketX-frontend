@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import DashboardSubnav from "@/components/dashboard/DashboardSubnav";
 import ProductCard from "@/components/marketplace/ProductCard";
-import { mockProducts } from "@/lib/mockData";
 import { getWishlist } from "@/lib/wishlistStore";
+import { createClient } from "@/lib/supabase/client";
+import { getProductsByIds, type Product } from "@/lib/products";
 
 export default function WishlistPage() {
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
 
   useEffect(() => {
     const reload = () => setWishlistIds(getWishlist());
@@ -16,7 +18,27 @@ export default function WishlistPage() {
     return () => window.removeEventListener("wishlist-change", reload);
   }, []);
 
-  const wishlistItems = mockProducts.filter((p) => wishlistIds.includes(p.id));
+  // The saved ids still come from localStorage; the listings behind them now
+  // come from the database. Moving the ids themselves into `wishlist_items`
+  // is what will make a wishlist follow the account onto another device.
+  useEffect(() => {
+    let active = true;
+
+    // No early return for an empty list: `getProductsByIds` already answers
+    // `[]` for one. Short-circuiting here would mean calling setState
+    // synchronously in the effect body, which triggers a cascading render.
+    getProductsByIds(createClient(), wishlistIds)
+      .then((products) => {
+        if (active) setWishlistItems(products);
+      })
+      .catch(() => {
+        if (active) setWishlistItems([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [wishlistIds]);
 
   return (
     <div className="min-h-screen bg-gray-50">

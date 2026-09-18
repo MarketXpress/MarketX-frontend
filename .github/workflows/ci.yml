@@ -38,3 +38,14 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        # NEXT_PUBLIC_ values are inlined into the bundle at build time rather
+        # than read at runtime, so the build cannot complete without them.
+        #
+        # Repository *variables* rather than secrets: both of these are public
+        # by design — they ship in the browser bundle, and row level security
+        # is what protects the data. Storing them as secrets would imply a
+        # confidentiality they do not have. The service-role key is a genuine
+        # secret and must never appear here.
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}

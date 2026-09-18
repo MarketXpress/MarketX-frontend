@@ -5,9 +5,16 @@ import CategoryChips from "@/components/home/CategoryChips";
 import HomeFooter from "@/components/home/HomeFooter";
 import ProductCard from "@/components/marketplace/ProductCard";
 import ProductCardSkeleton from "@/components/marketplace/ProductCardSkeleton";
-import { mockProducts } from "@/lib/mockData";
+import { createClient } from "@/lib/supabase/server";
+import { getFlashSaleProducts, getProducts } from "@/lib/products";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const [products, flashProducts] = await Promise.all([
+    getProducts(supabase),
+    getFlashSaleProducts(supabase),
+  ]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 pt-24 pb-0">
@@ -19,7 +26,7 @@ export default function Home() {
         {/* Flash sale */}
         <section className="mb-8">
           <Suspense>
-            <FlashSaleSection />
+            <FlashSaleSection products={flashProducts} />
           </Suspense>
         </section>
 
@@ -46,7 +53,7 @@ export default function Home() {
             }
           >
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-              {mockProducts.map((p) => (
+              {products.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>

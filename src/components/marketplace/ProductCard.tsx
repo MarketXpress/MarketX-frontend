@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { Star, Heart } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ProductMock } from "@/lib/mockData";
+import type { Product } from "@/lib/products";
 import { isWishlisted, toggleWishlist } from "@/lib/wishlistStore";
 
-export default function ProductCard({ product }: { product: ProductMock }) {
+export default function ProductCard({ product }: { product: Product }) {
   const [wishlisted, setWishlisted] = useState(false);
 
   useEffect(() => {

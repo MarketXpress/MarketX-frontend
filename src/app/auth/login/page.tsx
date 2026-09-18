@@ -4,14 +4,33 @@ import Link from "next/link";
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { authApi, ApiError } from "@/lib/api";
 
 type FormErrors = { email?: string; password?: string; form?: string };
+
+/**
+ * Turns a Supabase auth error into something a person can act on.
+ *
+ * "Invalid login credentials" is returned for both a wrong password and an
+ * unknown email — deliberately, so the form cannot be used to discover which
+ * addresses have accounts. The message here preserves that.
+ */
+function signInErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : "";
+
+  if (/invalid login credentials/i.test(message)) return "Invalid email or password";
+  if (/email not confirmed/i.test(message)) {
+    return "Check your inbox and confirm your email before signing in.";
+  }
+  if (/failed to fetch|network/i.test(message)) {
+    return "Cannot reach the server. Check your connection and try again.";
+  }
+  return message || "Something went wrong. Please try again.";
+}
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  const { signIn } = useAuth();
 
   const prefillEmail = searchParams.get("email") ?? "";
   const justRegistered = searchParams.get("registered") === "1";
@@ -38,19 +57,13 @@ function LoginForm() {
     if (Object.keys(errs).length > 0) return;
     setIsSubmitting(true);
     try {
-      const { accessToken, refreshToken } = await authApi.login({ email, password });
-      login(accessToken, refreshToken);
+      await signIn(email, password);
+      // Refresh so server components re-render against the new session cookie
+      // before the dashboard reads it.
+      router.refresh();
       router.push("/dashboard/orders");
     } catch (err) {
-      let message: string;
-      if (err instanceof ApiError) {
-        message = err.status === 401 ? "Invalid email or password" : err.message;
-      } else if (err instanceof TypeError && err.message.includes("fetch")) {
-        message = "Cannot reach the server. Make sure the backend is running.";
-      } else {
-        message = "Something went wrong. Please try again.";
-      }
-      setErrors({ form: message });
+      setErrors({ form: signInErrorMessage(err) });
     } finally {
       setIsSubmitting(false);
     }

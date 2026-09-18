@@ -10,7 +10,7 @@ import CartDrawer, { getCartCount, subscribeToCart } from "./CartDrawer";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const [query, setQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -190,7 +190,7 @@ export default function Navbar() {
                 <Link href="/dashboard/selling" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Selling Dashboard</Link>
                 <Link href="/dashboard/wallet" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Wallet</Link>
                 <Link href="/profile" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">Profile</Link>
-                <button role="menuitem" tabIndex={-1} onClick={() => { logout(); setAccountOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none">Sign Out</button>
+                <button role="menuitem" tabIndex={-1} onClick={() => { void signOut(); setAccountOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none">Sign Out</button>
               </div>
             )}
           </div>
