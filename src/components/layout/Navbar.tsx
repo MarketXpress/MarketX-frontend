@@ -2,18 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ShoppingCart, Heart, User, Store } from "lucide-react";
-import {
-  KeyboardEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { Heart, User, Store } from "lucide-react";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import CartDrawer from "./CartDrawer";
-import { getCartCount, subscribeToCart } from "@/lib/cartStore";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
@@ -22,16 +13,9 @@ export default function Navbar() {
   const { user, signOut } = useAuth();
   const [query, setQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const accountMenuRef = useRef<HTMLDivElement>(null);
 
-  // Read from the cart store rather than mirrored into state. Seeding state
-  // from localStorage during render made the server and browser disagree, and
-  // the server cannot know what is in a cart — hence the third argument.
-  const cartCount = useSyncExternalStore(subscribeToCart, getCartCount, () => 0);
-
-  const closeCart = useCallback(() => setCartOpen(false), []);
 
   const closeAccountMenu = (restoreFocus = true) => {
     setAccountOpen(false);
@@ -150,22 +134,14 @@ export default function Navbar() {
 
         <ThemeToggle />
 
-        <Link href="/dashboard/wishlist" className="relative p-2 text-ink-faint hover:text-accent-hover transition-colors">
-          <Heart className="w-5 h-5" />
-        </Link>
-
-        <button
-          onClick={() => setCartOpen(true)}
-          className="relative p-2 text-ink-faint hover:text-accent-hover transition-colors"
-          aria-label={`Shopping cart, ${cartCount} items`}
+        <Link
+          href="/dashboard/wishlist"
+          aria-label="Saved items"
+          title="Saved items"
+          className="relative p-2 text-ink-faint hover:text-accent transition-colors"
         >
-          <ShoppingCart className="w-5 h-5" />
-          {cartCount > 0 && (
-            <span className="absolute top-1 right-1 min-w-[16px] h-4 bg-accent text-on-accent text-[9px] font-bold rounded-full flex items-center justify-center px-[3px]">
-              {cartCount}
-            </span>
-          )}
-        </button>
+          <Heart className="w-5 h-5" aria-hidden="true" />
+        </Link>
 
         {user ? (
           <div className="relative">
@@ -212,7 +188,6 @@ export default function Navbar() {
       </div>
 
       {/* Cart drawer */}
-      <CartDrawer isOpen={cartOpen} onClose={closeCart} />
     </header>
   );
 }

@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Star, Heart, ShoppingCart, Check } from "lucide-react";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { Star, Heart } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { Product } from "@/lib/products";
 import { isWishlisted, toggleWishlist } from "@/lib/wishlistStore";
-import { addToCart, isInCart, subscribeToCart } from "@/lib/cartStore";
 import { formatUsd, formatXlm } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
@@ -33,14 +32,6 @@ export default function ProductCard({ product }: { product: Product }) {
     event.stopPropagation();
     setWishlisted(toggleWishlist(product.id));
   }
-
-  // Subscribed rather than read once, so adding from the product page is
-  // reflected on a card for the same item still on screen behind it.
-  const inCart = useSyncExternalStore(
-    subscribeToCart,
-    () => isInCart(product.id),
-    () => false,
-  );
 
   const cover = product.images?.[0];
 
@@ -132,29 +123,6 @@ export default function ProductCard({ product }: { product: Product }) {
             {product.seller}
           </Link>
         </div>
-
-        <button
-          type="button"
-          onClick={() => addToCart(product.id)}
-          className={cn(
-            "mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-[11px] font-semibold transition-colors",
-            inCart
-              ? "border-ok-line bg-ok-bg text-ok"
-              : "border-accent-line bg-accent-soft text-accent hover:bg-accent hover:text-on-accent",
-          )}
-        >
-          {inCart ? (
-            <>
-              <Check className="h-3.5 w-3.5" aria-hidden="true" />
-              In cart — add another
-            </>
-          ) : (
-            <>
-              <ShoppingCart className="h-3.5 w-3.5" aria-hidden="true" />
-              Add to cart
-            </>
-          )}
-        </button>
       </div>
     </div>
   );

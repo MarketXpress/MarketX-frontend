@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -9,14 +9,12 @@ import {
   ChevronLeft,
   Heart,
   Share2,
-  ShoppingCart,
   CheckCircle,
   Zap,
   Store,
   Package,
 } from "lucide-react";
 import type { Product } from "@/lib/products";
-import { addToCart, isInCart, subscribeToCart } from "@/lib/cartStore";
 
 export default function ProductDetailView({
   product,
@@ -31,12 +29,6 @@ export default function ProductDetailView({
 }) {
   const [activeImg, setActiveImg] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
-
-  const inCart = useSyncExternalStore(
-    subscribeToCart,
-    () => isInCart(product.id),
-    () => false,
-  );
 
   const discountSaving = product.originalUsdPrice - product.usdPrice;
 
@@ -224,28 +216,22 @@ export default function ProductDetailView({
               </div>
             </div>
 
-            {/* CTA buttons */}
+            {/* CTA */}
             <div className="flex flex-col gap-2.5">
               <button
                 type="button"
-                onClick={() => addToCart(product.id)}
-                className="w-full py-3.5 bg-accent hover:bg-accent-hover text-on-accent font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
+                disabled
+                className="w-full cursor-not-allowed rounded-xl bg-surface-3 py-3.5 text-sm font-bold text-ink-faint flex items-center justify-center gap-2"
               >
-                <ShoppingCart className="w-4 h-4" />
-                {inCart ? "Add another to cart" : "Add to cart"}
+                <Shield className="w-4 h-4" />
+                Buy with escrow
               </button>
 
-              <div className="rounded-xl border border-line bg-surface-2 px-4 py-3">
-                <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-                  <Shield className="w-4 h-4 text-accent" />
-                  Buying with escrow is not live yet
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-ink-muted">
-                  Payment means funding a Stellar smart contract that holds your money until you
-                  confirm the item arrived. That is the next phase of the project — you can save
-                  items until then.
-                </p>
-              </div>
+              <p className="text-center text-xs leading-relaxed text-ink-muted">
+                Not live yet. Buying means funding a Stellar contract that holds your money until
+                you confirm the item arrived — neither we nor the seller can touch it in the
+                meantime. Save it for now, or message the seller below.
+              </p>
             </div>
 
             {/* Delivery / guarantee chips */}
