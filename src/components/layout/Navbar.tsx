@@ -3,9 +3,17 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ShoppingCart, Heart, User, Store } from "lucide-react";
-import { KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
+import {
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { useAuth } from "@/context/AuthContext";
-import CartDrawer, { getCartCount, subscribeToCart } from "./CartDrawer";
+import CartDrawer from "./CartDrawer";
+import { getCartCount, subscribeToCart } from "@/lib/cartStore";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
@@ -15,14 +23,13 @@ export default function Navbar() {
   const [query, setQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(() => getCartCount());
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const accountMenuRef = useRef<HTMLDivElement>(null);
 
-  // Keep cart badge in sync with future cart changes
-  useEffect(() => {
-    return subscribeToCart(() => setCartCount(getCartCount()));
-  }, []);
+  // Read from the cart store rather than mirrored into state. Seeding state
+  // from localStorage during render made the server and browser disagree, and
+  // the server cannot know what is in a cart — hence the third argument.
+  const cartCount = useSyncExternalStore(subscribeToCart, getCartCount, () => 0);
 
   const closeCart = useCallback(() => setCartOpen(false), []);
 

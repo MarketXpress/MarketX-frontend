@@ -1,56 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Trash2, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { ProductMock, mockProducts } from "@/lib/mockData";
-import { cn } from "@/lib/utils";
+import { X, Trash2, Minus, Plus, ShoppingBag, AlertCircle, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { getProductsByIds, type Product } from "@/lib/products";
+import {
+  getCart,
+  getServerCart,
+  removeFromCart,
+  setQuantity,
+  subscribeToCart,
+  type CartLine,
+} from "@/lib/cartStore";
+import { formatUsd, formatXlm } from "@/lib/money";
 
-// ---------------------------------------------------------------------------
-// Cart mock data — three items from mockProducts so the badge count matches
-// ---------------------------------------------------------------------------
+/**
+ * The cart drawer.
+ *
+ * It used to open with three items in it for everybody — a hardcoded array of
+ * mock products, so a brand-new account was shown a badge reading 4 and a cart
+ * containing things it had never clicked. On a product whose whole pitch is
+ * that it can be trusted with your money, that was the worst possible first
+ * impression.
+ *
+ * Lines are ids and quantities; the listings behind them are fetched fresh
+ * each time the drawer opens, so a price the seller has since changed is the
+ * price shown.
+ */
 
-interface CartItem {
-  product: ProductMock;
-  quantity: number;
-}
+export { getCartCount, subscribeToCart } from "@/lib/cartStore";
 
-const initialCartItems: CartItem[] = [
-  { product: mockProducts[0], quantity: 1 }, // Samsung Galaxy A55 5G
-  { product: mockProducts[1], quantity: 2 }, // Nike Air Max 270
-  { product: mockProducts[4], quantity: 1 }, // Anker 65W GaN Charger
-];
-
-// ---------------------------------------------------------------------------
-// Public helpers so the Navbar badge stays in sync
-// ---------------------------------------------------------------------------
-
-let cartSubscriber: (() => void) | null = null;
-let _cartItems: CartItem[] = [...initialCartItems];
-
-export function getCartItems(): CartItem[] {
-  return _cartItems;
-}
-
-export function getCartCount(): number {
-  return _cartItems.reduce((sum, item) => sum + item.quantity, 0);
-}
-
-export function subscribeToCart(cb: () => void) {
-  cartSubscriber = cb;
-  return () => {
-    if (cartSubscriber === cb) cartSubscriber = null;
-  };
-}
-
-function notifyCartChange() {
-  cartSubscriber?.();
-}
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
+const EMPTY_PRODUCTS = new Map<string, Product>();
 
 export interface CartDrawerProps {
   isOpen: boolean;
@@ -58,70 +41,92 @@ export interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const [items, setItems] = useState<CartItem[]>(_cartItems);
+  const supabase = useMemo(() => createClient(), []);
+  const lines = useSyncExternalStore(subscribeToCart, getCart, getServerCart);
 
-  // Keep module-level state in sync with component state
-  useEffect(() => {
-    _cartItems = items;
-    notifyCartChange();
-  }, [items]);
+  // The fetch result is stored together with the id list it was fetched for,
+  // which lets "is it loading" be derived rather than tracked in its own
+  // state. A separate isLoading flag would have to be raised in the effect
+  // body, and setting state there costs a second render pass every time the
+  // drawer opens.
+  const [loaded, setLoaded] = useState<{
+    ids: string;
+    products: Map<string, Product>;
+  } | null>(null);
+  const [failedIds, setFailedIds] = useState<string | null>(null);
 
-  // Escape key
+  // Only fetched while the drawer is open — there is no reason to query the
+  // catalogue for a panel nobody has opened.
+  const ids = lines.map((line) => line.productId).join(",");
+
+  const isStale = loaded?.ids !== ids;
+  const isLoading = isOpen && ids !== "" && isStale && failedIds !== ids;
+  const loadFailed = failedIds === ids;
+  const products = isStale ? EMPTY_PRODUCTS : loaded.products;
+
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+    if (!isOpen || ids === "" || !isStale) return;
+
+    let active = true;
+
+    getProductsByIds(supabase, ids.split(","))
+      .then((found) => {
+        if (!active) return;
+        setLoaded({ ids, products: new Map(found.map((p) => [p.id, p])) });
+        setFailedIds(null);
+      })
+      .catch(() => {
+        if (active) setFailedIds(ids);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [isOpen, ids, isStale, supabase]);
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
     };
     if (isOpen) document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
 
-  // Prevent body scroll when open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (isOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
 
-  // --- cart operations ----------------------------------------------------
+  // A listing the seller has since unpublished or deleted comes back missing.
+  // Those lines are separated out and named rather than silently dropped —
+  // somebody who put an item in their cart should be told it is gone, not left
+  // to wonder where it went.
+  const resolved: { line: CartLine; product: Product }[] = [];
+  let unavailable = 0;
 
-  function updateQuantity(productId: string, delta: number) {
-    setItems((prev) =>
-      prev
-        .map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: Math.max(0, item.quantity + delta) }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
+  for (const line of lines) {
+    const product = products.get(line.productId);
+    if (product) resolved.push({ line, product });
+    else if (!isLoading && !loadFailed) unavailable += 1;
   }
 
-  function removeItem(productId: string) {
-    setItems((prev) => prev.filter((item) => item.product.id !== productId));
-  }
-
-  // --- subtotals ----------------------------------------------------------
-
-  const subtotalUsd = items.reduce(
-    (sum, item) => sum + item.product.usdPrice * item.quantity,
-    0
+  const subtotalUsd = resolved.reduce(
+    (total, { line, product }) => total + product.usdPrice * line.quantity,
+    0,
   );
-
-  const subtotalXlm = items.reduce(
-    (sum, item) => sum + item.product.xlmPrice * item.quantity,
-    0
+  const subtotalXlm = resolved.reduce(
+    (total, { line, product }) => total + product.xlmPrice * line.quantity,
+    0,
   );
+  const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
 
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[60] flex justify-end">
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -131,7 +136,6 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             onClick={onClose}
           />
 
-          {/* Drawer panel */}
           <motion.aside
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
@@ -140,17 +144,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             role="dialog"
             aria-modal="true"
             aria-label="Shopping cart"
-            className="relative w-full max-w-md h-full bg-surface shadow-2xl flex flex-col"
+            className="relative flex h-full w-full max-w-md flex-col bg-surface shadow-modal"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 h-14 border-b border-line shrink-0">
+            <div className="flex h-14 shrink-0 items-center justify-between border-b border-line px-5">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-accent" />
-                <h2 className="text-sm font-black text-ink">
+                <ShoppingBag className="h-5 w-5 text-accent" aria-hidden="true" />
+                <h2 className="text-sm font-bold text-ink">
                   Cart{" "}
-                  {items.length > 0 && (
-                    <span className="text-ink-faint font-normal">
-                      ({getCartCount()} items)
+                  {itemCount > 0 && (
+                    <span className="tnum font-normal text-ink-faint">
+                      ({itemCount} {itemCount === 1 ? "item" : "items"})
                     </span>
                   )}
                 </h2>
@@ -158,96 +161,125 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <button
                 onClick={onClose}
                 aria-label="Close cart"
-                className="p-1.5 rounded-md text-ink-faint hover:text-ink-muted hover:bg-surface-2 transition-colors"
+                className="rounded-md p-1.5 text-ink-faint transition-colors hover:bg-surface-2 hover:text-ink"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
-            {/* Body */}
-            {items.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center gap-3 px-5 text-center">
-                <ShoppingBag className="w-12 h-12 text-gray-200" />
-                <p className="text-sm font-semibold text-ink-faint">
-                  Your cart is empty
+            {lines.length === 0 ? (
+              <div className="flex flex-1 flex-col items-center justify-center gap-3 px-5 text-center">
+                <ShoppingBag className="h-12 w-12 text-ink-faint" aria-hidden="true" />
+                <p className="text-sm font-semibold text-ink">Your cart is empty</p>
+                <p className="text-xs text-ink-muted">
+                  Add something from the marketplace to get started.
                 </p>
-                <p className="text-xs text-ink-faint">
-                  Add items from the marketplace to get started.
-                </p>
-                <button
+                <Link
+                  href="/marketplace"
                   onClick={onClose}
-                  className="mt-2 px-5 py-2 text-xs font-semibold text-accent bg-accent-soft border border-accent-line rounded-lg hover:bg-accent-hover hover:text-on-accent hover:border-accent transition-colors"
+                  className="mt-2 rounded-lg border border-accent-line bg-accent-soft px-5 py-2 text-xs font-semibold text-accent transition-colors hover:border-accent hover:bg-accent hover:text-on-accent"
                 >
-                  Browse Marketplace
-                </button>
+                  Browse the marketplace
+                </Link>
               </div>
             ) : (
               <>
-                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-                  {items.map((item) => (
+                <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
+                  {isLoading && resolved.length === 0 && (
+                    <p className="flex items-center justify-center gap-2 py-8 text-sm text-ink-muted">
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                      Loading your cart…
+                    </p>
+                  )}
+
+                  {loadFailed && (
+                    <p className="flex items-start gap-2 rounded-md border border-bad-line bg-bad-bg px-3 py-2 text-xs text-ink">
+                      <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-bad" aria-hidden="true" />
+                      Could not load your cart. Check your connection and reopen it.
+                    </p>
+                  )}
+
+                  {unavailable > 0 && (
+                    <p className="flex items-start gap-2 rounded-md border border-warn-line bg-warn-bg px-3 py-2 text-xs text-ink">
+                      <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warn" aria-hidden="true" />
+                      {unavailable === 1 ? "An item is" : `${unavailable} items are`} no longer
+                      for sale and {unavailable === 1 ? "has" : "have"} been left out of the total.
+                    </p>
+                  )}
+
+                  {resolved.map(({ line, product }) => (
                     <div
-                      key={item.product.id}
-                      className="flex gap-3 pb-4 border-b border-line last:border-b-0 last:pb-0"
+                      key={product.id}
+                      className="flex gap-3 border-b border-line pb-4 last:border-b-0 last:pb-0"
                     >
-                      {/* Thumbnail */}
-                      <div className="w-16 h-16 rounded-lg bg-surface-2 flex items-center justify-center shrink-0">
-                        <div className="w-8 h-8 bg-surface-3 rounded" />
-                      </div>
-
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-ink line-clamp-1">
-                          {item.product.name}
-                        </p>
-                        <p className="text-[10px] text-ink-faint mt-0.5">
-                          {item.product.category} · {item.product.seller}
-                        </p>
-
-                        <div className="flex items-baseline gap-1.5 mt-1">
-                          <span className="text-sm font-black text-accent">
-                            ${(item.product.usdPrice * item.quantity).toFixed(2)}
+                      <Link
+                        href={`/product/${product.id}`}
+                        onClick={onClose}
+                        className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-surface-2"
+                      >
+                        {product.images?.[0] ? (
+                          <Image
+                            src={product.images[0]}
+                            alt=""
+                            fill
+                            sizes="64px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <span className="grid h-full place-items-center text-[10px] text-ink-faint">
+                            No photo
                           </span>
-                          <span className="text-[10px] text-ink-faint font-semibold">
-                            ≈{" "}
-                            {(
-                              item.product.xlmPrice * item.quantity
-                            ).toLocaleString()}{" "}
-                            XLM
+                        )}
+                      </Link>
+
+                      <div className="min-w-0 flex-1">
+                        <Link
+                          href={`/product/${product.id}`}
+                          onClick={onClose}
+                          className="line-clamp-1 text-xs font-semibold text-ink hover:text-accent"
+                        >
+                          {product.name}
+                        </Link>
+                        <p className="mt-0.5 text-[10px] text-ink-faint">
+                          {product.category} · {product.seller}
+                        </p>
+
+                        <div className="mt-1 flex items-baseline gap-1.5">
+                          <span className="tnum text-sm font-bold text-ink">
+                            {formatUsd(product.usdPrice * line.quantity)}
+                          </span>
+                          <span className="tnum text-[10px] text-ink-faint">
+                            ≈ {formatXlm(product.xlmPrice * line.quantity)}
                           </span>
                         </div>
 
-                        {/* Quantity controls + remove */}
-                        <div className="flex items-center justify-between mt-2">
+                        <div className="mt-2 flex items-center justify-between">
                           <div className="flex items-center gap-1">
                             <button
-                              onClick={() =>
-                                updateQuantity(item.product.id, -1)
-                              }
-                              aria-label="Decrease quantity"
-                              className="w-6 h-6 flex items-center justify-center rounded border border-line text-ink-faint hover:border-accent hover:text-accent-hover transition-colors"
+                              onClick={() => setQuantity(product.id, line.quantity - 1)}
+                              aria-label={`Decrease quantity of ${product.name}`}
+                              className="flex h-6 w-6 items-center justify-center rounded border border-line text-ink-faint transition-colors hover:border-accent hover:text-accent"
                             >
-                              <Minus className="w-3 h-3" />
+                              <Minus className="h-3 w-3" aria-hidden="true" />
                             </button>
-                            <span className="w-7 text-center text-xs font-semibold text-ink-muted">
-                              {item.quantity}
+                            <span className="tnum w-7 text-center text-xs font-semibold text-ink-muted">
+                              {line.quantity}
                             </span>
                             <button
-                              onClick={() =>
-                                updateQuantity(item.product.id, 1)
-                              }
-                              aria-label="Increase quantity"
-                              className="w-6 h-6 flex items-center justify-center rounded border border-line text-ink-faint hover:border-accent hover:text-accent-hover transition-colors"
+                              onClick={() => setQuantity(product.id, line.quantity + 1)}
+                              aria-label={`Increase quantity of ${product.name}`}
+                              className="flex h-6 w-6 items-center justify-center rounded border border-line text-ink-faint transition-colors hover:border-accent hover:text-accent"
                             >
-                              <Plus className="w-3 h-3" />
+                              <Plus className="h-3 w-3" aria-hidden="true" />
                             </button>
                           </div>
 
                           <button
-                            onClick={() => removeItem(item.product.id)}
-                            aria-label={`Remove ${item.product.name}`}
-                            className="p-1 rounded text-ink-faint hover:text-bad transition-colors"
+                            onClick={() => removeFromCart(product.id)}
+                            aria-label={`Remove ${product.name} from cart`}
+                            className="rounded p-1 text-ink-faint transition-colors hover:text-bad"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
                         </div>
                       </div>
@@ -255,38 +287,40 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   ))}
                 </div>
 
-                {/* Footer */}
-                <div className="border-t border-line px-5 py-4 space-y-3 shrink-0">
-                  {/* Subtotal */}
+                <div className="shrink-0 space-y-3 border-t border-line px-5 py-4">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-ink-faint">Subtotal</span>
-                      <span className="text-sm font-black text-ink">
-                        ${subtotalUsd.toFixed(2)}
+                      <span className="text-xs text-ink-muted">Subtotal</span>
+                      <span className="tnum text-sm font-bold text-ink">
+                        {formatUsd(subtotalUsd)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-ink-faint">
-                        ≈ {subtotalXlm.toLocaleString()} XLM
+                      <span className="tnum text-[10px] text-ink-faint">
+                        ≈ {formatXlm(subtotalXlm)}
                       </span>
-                      <span className="text-[10px] text-ink-faint">
-                        {items.length} item{items.length !== 1 ? "s" : ""}
+                      <span className="tnum text-[10px] text-ink-faint">
+                        {resolved.length} {resolved.length === 1 ? "listing" : "listings"}
                       </span>
                     </div>
                   </div>
 
-                  {/* CTA */}
-                  <Link
-                    href="/checkout"
-                    onClick={onClose}
-                    className={cn(
-                      "flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-sm font-bold transition-all active:scale-[0.98]",
-                      "bg-accent hover:bg-accent-hover text-on-accent shadow-sm shadow-accent/20"
-                    )}
+                  {/* Checkout is not built. It cannot be: paying means funding
+                      an escrow contract, and that is the next phase of the
+                      project. The button said "Go to Checkout" and linked to a
+                      route that does not exist, so it 404'd. Saying so is
+                      better than a dead link or a button that does nothing. */}
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full cursor-not-allowed rounded-lg bg-surface-3 py-2.5 text-sm font-bold text-ink-faint"
                   >
-                    Go to Checkout
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+                    Checkout
+                  </button>
+                  <p className="text-center text-[11px] leading-relaxed text-ink-faint">
+                    Paying means funding a Stellar escrow, which is not live yet. Your cart is
+                    saved.
+                  </p>
                 </div>
               </>
             )}

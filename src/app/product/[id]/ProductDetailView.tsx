@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -16,6 +16,7 @@ import {
   Package,
 } from "lucide-react";
 import type { Product } from "@/lib/products";
+import { addToCart, isInCart, subscribeToCart } from "@/lib/cartStore";
 
 export default function ProductDetailView({
   product,
@@ -30,6 +31,12 @@ export default function ProductDetailView({
 }) {
   const [activeImg, setActiveImg] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
+
+  const inCart = useSyncExternalStore(
+    subscribeToCart,
+    () => isInCart(product.id),
+    () => false,
+  );
 
   const discountSaving = product.originalUsdPrice - product.usdPrice;
 
@@ -219,14 +226,26 @@ export default function ProductDetailView({
 
             {/* CTA buttons */}
             <div className="flex flex-col gap-2.5">
-              <button className="w-full py-3.5 bg-accent hover:bg-accent-hover active:bg-accent-hover text-on-accent font-black text-sm rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm">
-                <Shield className="w-4 h-4" />
-                Buy with Escrow
-              </button>
-              <button className="w-full py-3 border border-line hover:border-accent hover:bg-accent-soft text-ink-muted font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
+              <button
+                type="button"
+                onClick={() => addToCart(product.id)}
+                className="w-full py-3.5 bg-accent hover:bg-accent-hover text-on-accent font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
+              >
                 <ShoppingCart className="w-4 h-4" />
-                Add to Cart
+                {inCart ? "Add another to cart" : "Add to cart"}
               </button>
+
+              <div className="rounded-xl border border-line bg-surface-2 px-4 py-3">
+                <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                  <Shield className="w-4 h-4 text-accent" />
+                  Buying with escrow is not live yet
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-ink-muted">
+                  Payment means funding a Stellar smart contract that holds your money until you
+                  confirm the item arrived. That is the next phase of the project — you can save
+                  items until then.
+                </p>
+              </div>
             </div>
 
             {/* Delivery / guarantee chips */}
