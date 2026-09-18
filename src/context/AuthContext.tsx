@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+import { syncWishlistWithUser } from "@/lib/wishlistStore";
 
 export interface AuthUser {
   id: string;
@@ -77,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!active) return;
       setSession(data.session);
       setIsLoading(false);
+      void syncWishlistWithUser(supabase, data.session?.user ? { id: data.session.user.id } : null);
     });
 
     // Keeps this tab in step with sign-ins, sign-outs and token refreshes,
@@ -86,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
       setIsLoading(false);
+      void syncWishlistWithUser(supabase, nextSession?.user ? { id: nextSession.user.id } : null);
     });
 
     return () => {
