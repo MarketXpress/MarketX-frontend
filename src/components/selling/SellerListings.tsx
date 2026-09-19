@@ -9,6 +9,7 @@ import {
   ImageOff,
   Loader2,
   PackagePlus,
+  Pencil,
   Star,
   Trash2,
 } from "lucide-react";
@@ -236,6 +237,15 @@ export default function SellerListings() {
               </div>
 
               <div className="flex shrink-0 items-center gap-1">
+                <Link
+                  href={`/dashboard/selling/${listing.id}/edit`}
+                  aria-label={`Edit ${listing.name}`}
+                  title="Edit this listing"
+                  className="grid h-8 w-8 place-items-center rounded-md text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink"
+                >
+                  <Pencil className="h-4 w-4" aria-hidden="true" />
+                </Link>
+
                 {listing.status === "active" ? (
                   <IconAction
                     label="Hide from the marketplace"
