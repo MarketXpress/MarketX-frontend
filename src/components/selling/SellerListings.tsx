@@ -1,14 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   Eye,
   EyeOff,
   ImageOff,
+  Images,
   Loader2,
   PackagePlus,
+  Pencil,
   Star,
   Trash2,
 } from "lucide-react";
@@ -44,26 +46,35 @@ export default function SellerListings() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<SellerListing | null>(null);
 
-  const load = useCallback(async () => {
-    if (!user) return;
-    try {
-      setListings(await getSellerListings(supabase, user.id));
-      setError(null);
-    } catch {
-      setError("Could not load your listings. Refresh to try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [supabase, user]);
-
   useEffect(() => {
+    let isCancelled = false;
     if (isAuthLoading) return;
     if (!user) {
-      setIsLoading(false);
-      return;
+      const timer = setTimeout(() => {
+        if (!isCancelled) setIsLoading(false);
+      }, 0);
+      return () => {
+        isCancelled = true;
+        clearTimeout(timer);
+      };
     }
-    load();
-  }, [isAuthLoading, user, load]);
+    const fetchListings = async () => {
+      try {
+        const data = await getSellerListings(supabase, user.id);
+        if (isCancelled) return;
+        setListings(data);
+        setError(null);
+      } catch {
+        if (!isCancelled) setError("Could not load your listings. Refresh to try again.");
+      } finally {
+        if (!isCancelled) setIsLoading(false);
+      }
+    };
+    fetchListings();
+    return () => {
+      isCancelled = true;
+    };
+  }, [isAuthLoading, user, supabase]);
 
   async function changeStatus(listing: SellerListing, status: ListingStatus) {
     setBusyId(listing.id);
@@ -232,10 +243,42 @@ export default function SellerListings() {
                   <span className="text-ink-faint">
                     {listing.imageCount} photo{listing.imageCount === 1 ? "" : "s"}
                   </span>
+                  {listing.imageCount === 0 && (
+                    <Link
+                      href={`/dashboard/selling/${listing.id}/images`}
+                      className="font-semibold text-accent hover:underline"
+                    >
+                      + Add photos
+                    </Link>
+                  )}
                 </div>
               </div>
 
               <div className="flex shrink-0 items-center gap-1">
+                <Link
+                  href={`/dashboard/selling/${listing.id}/images`}
+                  className={cn(
+                    "grid h-8 w-8 place-items-center rounded-md text-ink-muted transition-colors",
+                    "hover:bg-surface-2 hover:text-ink",
+                  )}
+                  aria-label="Manage photographs"
+                  title="Manage photographs"
+                >
+                  <Images className="h-4 w-4" aria-hidden="true" />
+                </Link>
+
+                <Link
+                  href={`/dashboard/selling/${listing.id}/edit`}
+                  className={cn(
+                    "grid h-8 w-8 place-items-center rounded-md text-ink-muted transition-colors",
+                    "hover:bg-surface-2 hover:text-ink",
+                  )}
+                  aria-label="Edit listing details"
+                  title="Edit listing details"
+                >
+                  <Pencil className="h-4 w-4" aria-hidden="true" />
+                </Link>
+
                 {listing.status === "active" ? (
                   <IconAction
                     label="Hide from the marketplace"
