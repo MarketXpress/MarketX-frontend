@@ -361,6 +361,141 @@ export async function getSellerProfile(
   };
 }
 
+export type SellerListingSort = "newest" | "price_asc" | "price_desc" | "rating";
+
+export interface SellerCategoryCount {
+  id: string;
+  name: string;
+  count: number;
+}
+
+export interface SellerStorefrontQueryOptions {
+  sellerId: string;
+  sortBy?: SellerListingSort;
+  query?: string;
+  categoryId?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface SellerStorefrontData {
+  listings: SellerListing[];
+  totalMatching: number;
+  totalActive: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  categories: SellerCategoryCount[];
+}
+
+/**
+ * Retrieves paginated, sorted, filtered active listings and available category breakdown for a seller storefront.
+ */
+export async function getSellerStorefrontData(
+  supabase: SupabaseClient,
+  options: SellerStorefrontQueryOptions,
+): Promise<SellerStorefrontData> {
+  const {
+    sellerId,
+    sortBy = "newest",
+    query = "",
+    categoryId,
+    page = 1,
+    pageSize = 12,
+  } = options;
+
+  // 1. Fetch category breakdown for this seller's active stock
+  const { data: allActiveRows, error: catError } = await supabase
+    .from("products")
+    .select("category_id, categories:category_id ( id, name )")
+    .eq("seller_id", sellerId)
+    .eq("status", "active");
+
+  if (catError) throw catError;
+
+  const totalActive = allActiveRows?.length ?? 0;
+  const categoryMap = new Map<string, SellerCategoryCount>();
+
+  for (const row of (allActiveRows ?? []) as unknown as Array<{
+    category_id: string | null;
+    categories: { id?: string; name: string } | null;
+  }>) {
+    const catId = row.category_id || row.categories?.id;
+    const catName = row.categories?.name;
+    if (catId && catName) {
+      const existing = categoryMap.get(catId);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        categoryMap.set(catId, { id: catId, name: catName, count: 1 });
+      }
+    }
+  }
+
+  const categories = Array.from(categoryMap.values()).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
+  // 2. Query filtered, sorted, paginated listings
+  let queryBuilder = supabase
+    .from("products")
+    .select(SELLER_LISTING_COLUMNS, { count: "exact" })
+    .eq("seller_id", sellerId)
+    .eq("status", "active");
+
+  if (categoryId) {
+    queryBuilder = queryBuilder.eq("category_id", categoryId);
+  }
+
+  const trimmedQuery = query.trim();
+  if (trimmedQuery) {
+    const safeQuery = trimmedQuery.replace(/[,()]/g, " ").trim();
+    queryBuilder = queryBuilder.or(
+      `name.ilike.%${safeQuery}%,description.ilike.%${safeQuery}%`,
+    );
+  }
+
+  switch (sortBy) {
+    case "price_asc":
+      queryBuilder = queryBuilder.order("usd_price", { ascending: true });
+      break;
+    case "price_desc":
+      queryBuilder = queryBuilder.order("usd_price", { ascending: false });
+      break;
+    case "rating":
+      queryBuilder = queryBuilder
+        .order("rating", { ascending: false, nullsFirst: false })
+        .order("review_count", { ascending: false });
+      break;
+    case "newest":
+    default:
+      queryBuilder = queryBuilder.order("created_at", { ascending: false });
+      break;
+  }
+
+  const validPage = Math.max(1, page);
+  const from = (validPage - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, count, error } = await queryBuilder.range(from, to);
+
+  if (error) throw error;
+
+  const totalMatching = count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalMatching / pageSize));
+  const listings = (data as unknown as SellerListingRow[]).map(mapSellerListing);
+
+  return {
+    listings,
+    totalMatching,
+    totalActive,
+    page: validPage,
+    pageSize,
+    totalPages,
+    categories,
+  };
+}
+
 /** A seller's public shopfront: active listings only. */
 export async function getSellerActiveListings(
   supabase: SupabaseClient,
