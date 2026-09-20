@@ -163,25 +163,18 @@ export default function ListingForm() {
 
   const needsPayoutAddress = !payoutAddress;
   const usdPrice = Number.isFinite(watched.usdPrice) ? watched.usdPrice : 0;
-
-  if (isLoadingContext) {
-    return (
-      <div className="flex items-center justify-center rounded-lg border border-line bg-surface py-20 text-sm text-ink-muted">
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-        Loading…
-      </div>
-    );
-  }
+  const isFormDisabled = isLoadingContext || isSubmitting;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="space-y-6">
+      <fieldset disabled={isFormDisabled} className="space-y-6 border-0 p-0 m-0 min-w-0">
         {/* ---------------------------------------------------------------- */}
         <Section title="What are you selling?">
           <Field label="Item name" error={errors.name?.message} htmlFor="name">
             <input
               id="name"
               {...register("name")}
+              disabled={isFormDisabled}
               placeholder="Samsung Galaxy A55 5G, 256GB, unlocked"
               className={inputClass(!!errors.name)}
             />
@@ -189,9 +182,15 @@ export default function ListingForm() {
           </Field>
 
           <Field label="Category" error={errors.categoryId?.message} htmlFor="categoryId">
-            <select id="categoryId" {...register("categoryId")} className={inputClass(!!errors.categoryId)} defaultValue="">
+            <select
+              id="categoryId"
+              {...register("categoryId")}
+              disabled={isFormDisabled}
+              className={inputClass(!!errors.categoryId)}
+              defaultValue=""
+            >
               <option value="" disabled>
-                Choose a category
+                {isLoadingContext ? "Loading categories…" : "Choose a category"}
               </option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -206,6 +205,7 @@ export default function ListingForm() {
               id="description"
               rows={6}
               {...register("description")}
+              disabled={isFormDisabled}
               placeholder="Condition, age, what is included, anything wrong with it. Buyers who know exactly what they are getting raise fewer disputes."
               className={cn(inputClass(!!errors.description), "resize-y leading-relaxed")}
             />
@@ -224,7 +224,7 @@ export default function ListingForm() {
               <ImagePicker
                 files={field.value ?? []}
                 onChange={field.onChange}
-                disabled={isSubmitting}
+                disabled={isFormDisabled}
                 error={errors.images?.message}
               />
             )}
@@ -290,7 +290,12 @@ export default function ListingForm() {
 
         {/* ---------------------------------------------------------------- */}
         <Section title="Where you get paid">
-          {payoutAddress ? (
+          {isLoadingContext ? (
+            <div className="flex animate-pulse items-center gap-3 rounded-md border border-line bg-surface-2 p-3 text-xs text-ink-muted">
+              <div className="h-4 w-4 rounded bg-surface-3" />
+              <div className="h-4 w-48 rounded bg-surface-3" />
+            </div>
+          ) : payoutAddress ? (
             <div className="flex items-start gap-3 rounded-md border border-ok-line bg-ok-bg px-3 py-2.5">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-ok" aria-hidden="true" />
               <div className="min-w-0">
@@ -347,7 +352,7 @@ export default function ListingForm() {
             {submitError}
           </div>
         )}
-      </div>
+      </fieldset>
 
       {/* ------------------------------------------------------------------ */}
       {/* Preview. A seller is writing for a grid they cannot see while they  */}
@@ -366,14 +371,14 @@ export default function ListingForm() {
 
         <button
           type="submit"
-          disabled={isSubmitting || needsPayoutAddress}
+          disabled={isFormDisabled || (!isLoadingContext && needsPayoutAddress)}
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-          {isSubmitting ? "Publishing…" : "Publish listing"}
+          {isLoadingContext ? "Loading…" : isSubmitting ? "Publishing…" : "Publish listing"}
         </button>
 
-        {needsPayoutAddress && (
+        {!isLoadingContext && needsPayoutAddress && (
           <p className="mt-2 text-center text-xs text-ink-faint">
             Add a payout address to publish.
           </p>

@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   Eye,
   EyeOff,
   ImageOff,
-  Loader2,
   PackagePlus,
   Star,
   Trash2,
@@ -44,26 +43,35 @@ export default function SellerListings() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<SellerListing | null>(null);
 
-  const load = useCallback(async () => {
-    if (!user) return;
-    try {
-      setListings(await getSellerListings(supabase, user.id));
-      setError(null);
-    } catch {
-      setError("Could not load your listings. Refresh to try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [supabase, user]);
-
   useEffect(() => {
+    let active = true;
     if (isAuthLoading) return;
     if (!user) {
-      setIsLoading(false);
-      return;
+      const timer = setTimeout(() => setIsLoading(false), 0);
+      return () => clearTimeout(timer);
     }
-    load();
-  }, [isAuthLoading, user, load]);
+    async function fetchListings() {
+      try {
+        const data = await getSellerListings(supabase, user!.id);
+        if (active) {
+          setListings(data);
+          setError(null);
+        }
+      } catch {
+        if (active) {
+          setError("Could not load your listings. Refresh to try again.");
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
+      }
+    }
+    void fetchListings();
+    return () => {
+      active = false;
+    };
+  }, [isAuthLoading, user, supabase]);
 
   async function changeStatus(listing: SellerListing, status: ListingStatus) {
     setBusyId(listing.id);
@@ -118,9 +126,41 @@ export default function SellerListings() {
 
   if (isAuthLoading || isLoading) {
     return (
-      <div className="flex items-center justify-center rounded-lg border border-line bg-surface py-20 text-sm text-ink-muted">
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-        Loading your listings…
+      <div className="space-y-4" aria-busy="true" aria-label="Loading your listings">
+        <dl className="mb-4 grid grid-cols-3 gap-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse rounded-lg border border-line bg-surface p-3 text-center">
+              <div className="mx-auto h-2.5 w-12 rounded bg-surface-3" />
+              <div className="mx-auto mt-2 h-5 w-16 rounded bg-surface-2" />
+            </div>
+          ))}
+        </dl>
+
+        <ul className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <li
+              key={i}
+              className="flex animate-pulse items-center gap-4 rounded-lg border border-line bg-surface p-3"
+            >
+              <div className="h-16 w-16 shrink-0 rounded-md bg-surface-2" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-12 rounded-full bg-surface-2" />
+                  <div className="h-3 w-20 rounded bg-surface-3" />
+                </div>
+                <div className="h-4 w-3/4 rounded bg-surface-2" />
+                <div className="flex items-center gap-3">
+                  <div className="h-3.5 w-16 rounded bg-surface-3" />
+                  <div className="h-3.5 w-10 rounded bg-surface-3" />
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <div className="h-8 w-8 rounded-md bg-surface-2" />
+                <div className="h-8 w-8 rounded-md bg-surface-2" />
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
