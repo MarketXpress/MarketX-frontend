@@ -58,7 +58,7 @@ export interface ListingInput {
 }
 
 /** See the note in `products.ts`: PostgREST sends `numeric` as a string. */
-function toNumber(value: string | number | null | undefined, fallback = 0): number {
+export function toNumber(value: string | number | null | undefined, fallback = 0): number {
   if (value === null || value === undefined) return fallback;
   const parsed = typeof value === "number" ? value : Number.parseFloat(value);
   return Number.isFinite(parsed) ? parsed : fallback;
@@ -192,7 +192,7 @@ export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "i
  * Public URLs are `<project>/storage/v1/object/public/<bucket>/<path>`, and it
  * is the `<path>` part the storage API wants back.
  */
-function storagePathFromUrl(url: string): string | null {
+export function storagePathFromUrl(url: string): string | null {
   const marker = `/object/public/${BUCKET}/`;
   const index = url.indexOf(marker);
   return index === -1 ? null : url.slice(index + marker.length);
@@ -256,7 +256,7 @@ const SELLER_LISTING_COLUMNS = `
   product_images ( url, position )
 `;
 
-interface SellerListingRow {
+export interface SellerListingRow {
   id: string;
   name: string;
   description: string | null;
@@ -272,7 +272,7 @@ interface SellerListingRow {
   product_images: { url: string; position: number }[] | null;
 }
 
-function mapSellerListing(row: SellerListingRow): SellerListing {
+export function mapSellerListing(row: SellerListingRow): SellerListing {
   const images = [...(row.product_images ?? [])].sort((a, b) => a.position - b.position);
 
   return {
