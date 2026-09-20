@@ -186,13 +186,19 @@ export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 export const MAX_IMAGES = 6;
 export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 
+export interface ListingImage {
+  id?: string;
+  url: string;
+  position: number;
+}
+
 /**
  * Recovers the object path from a public URL, for deletion.
  *
  * Public URLs are `<project>/storage/v1/object/public/<bucket>/<path>`, and it
  * is the `<path>` part the storage API wants back.
  */
-function storagePathFromUrl(url: string): string | null {
+export function storagePathFromUrl(url: string): string | null {
   const marker = `/object/public/${BUCKET}/`;
   const index = url.indexOf(marker);
   return index === -1 ? null : url.slice(index + marker.length);
@@ -243,6 +249,135 @@ export async function uploadListingImages(
   }
 
   return urls;
+}
+
+/**
+ * Fetches all photographs attached to a listing, ordered by position ascending.
+ */
+export async function getListingImages(
+  supabase: SupabaseClient,
+  listingId: string,
+): Promise<ListingImage[]> {
+  const { data, error } = await supabase
+    .from("product_images")
+    .select("id, url, position")
+    .eq("product_id", listingId)
+    .order("position", { ascending: true });
+
+  if (error) throw error;
+  return (data ?? []) as ListingImage[];
+}
+
+/**
+ * Safely reorders photographs for a listing to match the provided ordered items.
+ *
+ * PostgreSQL enforces `unique (product_id, position)`, so swapping positions
+ * directly would trigger a uniqueness collision on the intermediate state.
+ * To guarantee collision-free updates, we use a two-phase update:
+ * Phase 1: Shift all target rows to temporary negative offset positions.
+ * Phase 2: Set each row to its final contiguous position 0..N-1.
+ */
+export async function reorderListingImages(
+  supabase: SupabaseClient,
+  listingId: string,
+  orderedImages: { id?: string; url: string }[],
+): Promise<void> {
+  if (orderedImages.length === 0) return;
+
+  // Phase 1: Temporary negative positions to avoid unique(product_id, position) collisions
+  for (let i = 0; i < orderedImages.length; i++) {
+    const item = orderedImages[i];
+    const tempPos = -(i + 1000);
+    const query = supabase
+      .from("product_images")
+      .update({ position: tempPos });
+
+    const { error } = item.id
+      ? await query.eq("id", item.id)
+      : await query.eq("product_id", listingId).eq("url", item.url);
+
+    if (error) throw error;
+  }
+
+  // Phase 2: Assign final contiguous positions 0..N-1
+  for (let i = 0; i < orderedImages.length; i++) {
+    const item = orderedImages[i];
+    const query = supabase
+      .from("product_images")
+      .update({ position: i });
+
+    const { error } = item.id
+      ? await query.eq("id", item.id)
+      : await query.eq("product_id", listingId).eq("url", item.url);
+
+    if (error) throw error;
+  }
+}
+
+/**
+ * Removes a photograph from both Supabase Storage and `product_images`, then
+ * re-indexes the remaining photographs so their positions remain contiguous from 0.
+ */
+export async function deleteListingImage(
+  supabase: SupabaseClient,
+  listingId: string,
+  target: { id?: string; url: string },
+): Promise<void> {
+  // 1. Remove the file object from Storage if path is resolvable
+  const storagePath = storagePathFromUrl(target.url);
+  if (storagePath) {
+    await supabase.storage.from(BUCKET).remove([storagePath]);
+  }
+
+  // 2. Remove row from database
+  const query = supabase.from("product_images").delete();
+  const { error: deleteError } = target.id
+    ? await query.eq("id", target.id)
+    : await query.eq("product_id", listingId).eq("url", target.url);
+
+  if (deleteError) throw deleteError;
+
+  // 3. Re-index remaining images to ensure contiguous 0..N-1 positions
+  const remaining = await getListingImages(supabase, listingId);
+  await reorderListingImages(supabase, listingId, remaining);
+}
+
+/**
+ * Sets a specific photograph as the cover image (position 0), shifting others down.
+ */
+export async function setListingCoverImage(
+  supabase: SupabaseClient,
+  listingId: string,
+  target: { id?: string; url: string },
+): Promise<void> {
+  const current = await getListingImages(supabase, listingId);
+  const targetIndex = current.findIndex(
+    (img) => (target.id && img.id === target.id) || img.url === target.url,
+  );
+  if (targetIndex === -1 || targetIndex === 0) return;
+
+  const next = [...current];
+  const [selected] = next.splice(targetIndex, 1);
+  next.unshift(selected);
+
+  await reorderListingImages(supabase, listingId, next);
+}
+
+/**
+ * Appends new photographs to an existing listing, respecting the 6-image limit.
+ */
+export async function addListingImages(
+  supabase: SupabaseClient,
+  sellerId: string,
+  listingId: string,
+  files: File[],
+): Promise<string[]> {
+  const current = await getListingImages(supabase, listingId);
+  if (current.length + files.length > MAX_IMAGES) {
+    throw new Error(`Cannot exceed ${MAX_IMAGES} photographs per listing.`);
+  }
+
+  return uploadListingImages(supabase, sellerId, listingId, files, current.length);
 }
 
 // ---------------------------------------------------------------------------

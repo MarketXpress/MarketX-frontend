@@ -296,9 +296,12 @@ export default function ProductDetailView({
                     )}
                   </div>
                 </div>
-                <button className="shrink-0 text-[11px] font-semibold text-accent bg-accent-soft border border-accent-line px-3 py-1.5 rounded-lg hover:bg-accent-hover hover:text-on-accent hover:border-accent transition-colors">
+                <Link
+                  href={`/inbox?product=${product.id}&seller=${product.sellerId}`}
+                  className="shrink-0 text-[11px] font-semibold text-accent bg-accent-soft border border-accent-line px-3 py-1.5 rounded-lg hover:bg-accent-hover hover:text-on-accent hover:border-accent transition-colors"
+                >
                   Contact
-                </button>
+                </Link>
               </div>
             </div>
           </div>
