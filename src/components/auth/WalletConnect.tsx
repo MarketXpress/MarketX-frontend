@@ -11,19 +11,22 @@ export default function WalletConnect() {
   const [loading, setLoading] = useState(false);
   const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
 
-  const checkConnection = async () => {
-    try {
-      if (await isConnected()) {
-        const { address } = await getAddress();
-        if (address) setAddress(address);
-      }
-    } catch (e) {
-      console.error("Freighter check failed", e);
-    }
-  };
-
   useEffect(() => {
-    checkConnection();
+    let active = true;
+    async function init() {
+      try {
+        if (await isConnected()) {
+          const { address } = await getAddress();
+          if (active && address) setAddress(address);
+        }
+      } catch (e) {
+        console.error("Freighter check failed", e);
+      }
+    }
+    void init();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const connect = async () => {
