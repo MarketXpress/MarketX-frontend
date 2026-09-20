@@ -43,7 +43,7 @@ const PRODUCT_COLUMNS = `
   product_images ( url, position )
 `;
 
-interface ProductRow {
+export interface ProductRow {
   id: string;
   name: string;
   description: string | null;
@@ -66,13 +66,13 @@ interface ProductRow {
  * enough to convert safely for display; anything that sums money for a real
  * charge should keep the string and do the arithmetic server-side.
  */
-function toNumber(value: string | number | null | undefined, fallback = 0): number {
+export function toNumber(value: string | number | null | undefined, fallback = 0): number {
   if (value === null || value === undefined) return fallback;
   const parsed = typeof value === 'number' ? value : Number.parseFloat(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function mapProduct(row: ProductRow): Product {
+export function mapProduct(row: ProductRow): Product {
   const usdPrice = toNumber(row.usd_price);
 
   return {

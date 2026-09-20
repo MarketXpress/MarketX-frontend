@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -44,26 +44,35 @@ export default function SellerListings() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<SellerListing | null>(null);
 
-  const load = useCallback(async () => {
-    if (!user) return;
-    try {
-      setListings(await getSellerListings(supabase, user.id));
-      setError(null);
-    } catch {
-      setError("Could not load your listings. Refresh to try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [supabase, user]);
-
   useEffect(() => {
+    let active = true;
     if (isAuthLoading) return;
     if (!user) {
-      setIsLoading(false);
-      return;
+      const timer = setTimeout(() => setIsLoading(false), 0);
+      return () => clearTimeout(timer);
     }
-    load();
-  }, [isAuthLoading, user, load]);
+    async function fetchListings() {
+      try {
+        const data = await getSellerListings(supabase, user!.id);
+        if (active) {
+          setListings(data);
+          setError(null);
+        }
+      } catch {
+        if (active) {
+          setError("Could not load your listings. Refresh to try again.");
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
+      }
+    }
+    void fetchListings();
+    return () => {
+      active = false;
+    };
+  }, [isAuthLoading, user, supabase]);
 
   async function changeStatus(listing: SellerListing, status: ListingStatus) {
     setBusyId(listing.id);

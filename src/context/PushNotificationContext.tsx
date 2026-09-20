@@ -73,7 +73,8 @@ export function PushNotificationProvider({
   }, []);
 
   useEffect(() => {
-    syncState();
+    const timer = setTimeout(() => syncState(), 0);
+    return () => clearTimeout(timer);
   }, [syncState]);
 
   useEffect(() => {
