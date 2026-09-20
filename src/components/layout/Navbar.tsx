@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ShoppingCart, Heart, User, Store } from "lucide-react";
+import { ShoppingCart, Heart, User, Store, MessageSquare } from "lucide-react";
 import { KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import CartDrawer, { getCartCount, subscribeToCart } from "./CartDrawer";
@@ -143,6 +143,10 @@ export default function Navbar() {
 
         <ThemeToggle />
 
+        <Link href="/inbox" className="relative p-2 text-ink-faint hover:text-accent-hover transition-colors" title="Messages">
+          <MessageSquare className="w-5 h-5" />
+        </Link>
+
         <Link href="/dashboard/wishlist" className="relative p-2 text-ink-faint hover:text-accent-hover transition-colors">
           <Heart className="w-5 h-5" />
         </Link>
@@ -189,6 +193,7 @@ export default function Navbar() {
                   <p className="text-xs font-semibold text-ink truncate">{user.email}</p>
                   <p className="text-[10px] text-ink-faint capitalize">{user.role.toLowerCase()}</p>
                 </div>
+                <Link href="/inbox" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Messages</Link>
                 <Link href="/dashboard/orders" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">My Orders</Link>
                 <Link href="/dashboard/selling" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Selling Dashboard</Link>
                 <Link href="/dashboard/wallet" role="menuitem" tabIndex={-1} onClick={() => setAccountOpen(false)} className="block px-3 py-2 text-sm text-ink-muted hover:bg-surface-2 focus:bg-surface-2 focus:outline-none">Wallet</Link>
