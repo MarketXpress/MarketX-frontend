@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   Heart,
   Share2,
-  ShoppingCart,
   CheckCircle,
   Zap,
   Store,
@@ -217,16 +216,22 @@ export default function ProductDetailView({
               </div>
             </div>
 
-            {/* CTA buttons */}
+            {/* CTA */}
             <div className="flex flex-col gap-2.5">
-              <button className="w-full py-3.5 bg-accent hover:bg-accent-hover active:bg-accent-hover text-on-accent font-black text-sm rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm">
+              <button
+                type="button"
+                disabled
+                className="w-full cursor-not-allowed rounded-xl bg-surface-3 py-3.5 text-sm font-bold text-ink-faint flex items-center justify-center gap-2"
+              >
                 <Shield className="w-4 h-4" />
-                Buy with Escrow
+                Buy with escrow
               </button>
-              <button className="w-full py-3 border border-line hover:border-accent hover:bg-accent-soft text-ink-muted font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
-                <ShoppingCart className="w-4 h-4" />
-                Add to Cart
-              </button>
+
+              <p className="text-center text-xs leading-relaxed text-ink-muted">
+                Not live yet. Buying means funding a Stellar contract that holds your money until
+                you confirm the item arrived — neither we nor the seller can touch it in the
+                meantime. Save it for now, or message the seller below.
+              </p>
             </div>
 
             {/* Delivery / guarantee chips */}
@@ -296,8 +301,13 @@ export default function ProductDetailView({
                     )}
                   </div>
                 </div>
-                <button className="shrink-0 text-[11px] font-semibold text-accent bg-accent-soft border border-accent-line px-3 py-1.5 rounded-lg hover:bg-accent-hover hover:text-on-accent hover:border-accent transition-colors">
-                  Contact
+                <button
+                  type="button"
+                  disabled
+                  title="Messaging between buyers and sellers is not built yet"
+                  className="shrink-0 cursor-not-allowed rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-[11px] font-semibold text-ink-faint"
+                >
+                  Contact — soon
                 </button>
               </div>
             </div>

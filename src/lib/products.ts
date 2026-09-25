@@ -194,3 +194,103 @@ export async function getProductsByIds(
   );
   return ids.map((id) => byId.get(id)).filter((p): p is Product => Boolean(p));
 }
+
+// ---------------------------------------------------------------------------
+// Marketplace browsing
+// ---------------------------------------------------------------------------
+
+export const SORT_OPTIONS = ['newest', 'price-asc', 'price-desc', 'rating'] as const;
+export type SortOption = (typeof SORT_OPTIONS)[number];
+
+export interface MarketplaceQuery {
+  search?: string;
+  categoryIds?: string[];
+  minPrice?: number;
+  maxPrice?: number;
+  minRating?: number;
+  sort?: SortOption;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface MarketplacePage {
+  products: Product[];
+  /** Total matching the filters, not the number on this page. */
+  total: number;
+  page: number;
+  pageCount: number;
+}
+
+const ORDER_BY: Record<SortOption, { column: string; ascending: boolean }> = {
+  newest: { column: 'created_at', ascending: false },
+  'price-asc': { column: 'usd_price', ascending: true },
+  'price-desc': { column: 'usd_price', ascending: false },
+  rating: { column: 'rating', ascending: false },
+};
+
+/**
+ * The marketplace grid: filtered, sorted and paged in the database.
+ *
+ * Every constraint here is applied by Postgres rather than by filtering a
+ * fetched array in the browser. The page this replaced downloaded its whole
+ * (mock) catalogue and filtered in memory, which is invisible at ten listings
+ * and fatal at ten thousand.
+ *
+ * `count: 'exact'` is what makes a page count possible without a second
+ * round trip.
+ */
+export async function getMarketplaceListings(
+  supabase: SupabaseClient,
+  options: MarketplaceQuery = {},
+): Promise<MarketplacePage> {
+  const pageSize = options.pageSize ?? 12;
+  const page = Math.max(1, options.page ?? 1);
+  const from = (page - 1) * pageSize;
+
+  let query = supabase
+    .from('products')
+    .select(PRODUCT_COLUMNS, { count: 'exact' })
+    .eq('status', 'active');
+
+  const search = options.search?.trim();
+  if (search) {
+    // Commas and parentheses are PostgREST's own syntax inside `or`, so a
+    // search for "phone, cheap" would otherwise be read as two filters.
+    const safe = search.replace(/[,()]/g, ' ').trim();
+    if (safe) query = query.or(`name.ilike.%${safe}%,description.ilike.%${safe}%`);
+  }
+
+  if (options.categoryIds && options.categoryIds.length > 0) {
+    query = query.in('category_id', options.categoryIds);
+  }
+
+  if (typeof options.minPrice === 'number' && Number.isFinite(options.minPrice)) {
+    query = query.gte('usd_price', options.minPrice);
+  }
+
+  if (typeof options.maxPrice === 'number' && Number.isFinite(options.maxPrice)) {
+    query = query.lte('usd_price', options.maxPrice);
+  }
+
+  if (typeof options.minRating === 'number' && Number.isFinite(options.minRating)) {
+    query = query.gte('rating', options.minRating);
+  }
+
+  const order = ORDER_BY[options.sort ?? 'newest'];
+  const { data, error, count } = await query
+    .order(order.column, { ascending: order.ascending })
+    // A stable tiebreak, so two listings at the same price do not swap places
+    // between pages and cause one to appear twice and another not at all.
+    .order('id', { ascending: true })
+    .range(from, from + pageSize - 1);
+
+  if (error) throw error;
+
+  const total = count ?? 0;
+  return {
+    products: (data as unknown as ProductRow[]).map(mapProduct),
+    total,
+    page,
+    pageCount: Math.max(1, Math.ceil(total / pageSize)),
+  };
+}
